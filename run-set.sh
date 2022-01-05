@@ -11,7 +11,7 @@ do
 adb shell pm uninstall -k --user 0 $APPS
 done
 echo 'Процесс удаления завершен'
-exit 0
+selectind
 }
 
 input(){

@@ -11,7 +11,7 @@ do
 adb shell pm install --user 0 $APPS
 done
 echo 'Процесс восстановления завершен'
-exit 0
+selectind
 }
 
 input(){
