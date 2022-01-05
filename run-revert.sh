@@ -3,6 +3,7 @@ export LD_LIBRARY_PATH=./lib64:"$LD_LIBRARY_PATH"
 export PATH=./:"$PATH"
 APPS_LIST=`cat ./APPS_LIST`
 DEV=$(adb devices | tail +2 | cut -f1)
+F='$'
 
 worker(){
 for APPS in $APPS_LIST
@@ -39,13 +40,13 @@ echo '****************************************'
 selectind
 }
 
-ALL_REM() { adb shell pm list packages -u; }
-ALL() { adb shell pm list packages; }
+ALL_REM() { adb shell pm list packages -u | grep $F | sort; }
+ALL() { adb shell pm list packages | grep $F | sort; }
 
 list_removed(){
 COMM=$(comm -23 <(ALL_REM) <(ALL))
 echo '****************************************'
-echo "$COMM | grep $F"
+echo "$COMM"
 echo '****************************************'
 selectind
 }
@@ -63,7 +64,7 @@ echo "##########################################################################
 Введите s для отображения системных приложений.
 Введите r для отображения удаленных приложений.
 Введите f для установки фильтра по слову. Вышеописанные выводы будут отфильтрованы по этому слову
-Для сброса фильтра нужно установить его пустым
+Для сброса фильтра нужно установить ему значение $
 Установлен фильтр по слову: $F
 Зажмите на клавиатуре Ctrl + c для завершение работы скрипта на этом этапе.
 __________________"
