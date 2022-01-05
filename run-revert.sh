@@ -7,7 +7,7 @@ DEV=$(adb devices | tail +2 | cut -f1)
 worker(){
 for APPS in $APPS_LIST
 do
-adb shell pm install -k --user 0 $APPS
+adb shell pm install --user 0 $APPS
 done
 echo 'Процесс восстановления завершен'
 exit 0
