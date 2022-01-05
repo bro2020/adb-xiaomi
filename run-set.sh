@@ -21,21 +21,21 @@ worker
 
 list_all(){
 echo '****************************************'
-adb shell pm list packages -u | grep $F
+adb shell pm list packages -u | grep $F | sort
 echo '****************************************'
 selectind
 }
 
 list_installed(){
 echo '****************************************'
-adb shell pm list packages -3 | grep $F
+adb shell pm list packages -3 | grep $F | sort
 echo '****************************************'
 selectind
 }
 
 list_system(){
 echo '****************************************'
-adb shell pm list packages -s | grep $F
+adb shell pm list packages -s | grep $F | sort
 echo '****************************************'
 selectind
 }

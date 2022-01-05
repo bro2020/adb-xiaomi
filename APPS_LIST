@@ -1,3 +1,6 @@
 com.google.android.apps.turbo
 com.miui.analytics
-
+com.android.stk
+com.mi.android.globalminusscreen
+com.google.android.cellbroadcastreceiver
+com.google.android.cellbroadcastservice
