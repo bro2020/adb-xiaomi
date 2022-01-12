@@ -28,3 +28,6 @@ com.google.android.partnersetup
 com.android.providers.partnerbookmarks
 com.miui.miservice
 com.miui.hybrid.accessory
+com.miui.hybrid
+com.miui.aod
+com.mipay.wallet.id
