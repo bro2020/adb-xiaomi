@@ -58,6 +58,7 @@ list_all(){
 echo -e "$YE*********************************************$EN"
 adb shell pm list packages -u | grep $F | sort | cut -d: -f2
 echo -e "$YE*********************************************$EN"
+$STATUS
 main_selectind
 }
 
@@ -65,6 +66,7 @@ list_installed(){
 echo -e "$YE*********************************************$EN"
 adb shell pm list packages -3 | grep $F | sort | cut -d: -f2
 echo -e "$YE*********************************************$EN"
+$STATUS
 main_selectind
 }
 
@@ -72,6 +74,7 @@ list_system(){
 echo -e "$YE*********************************************$EN"
 adb shell pm list packages -s | grep $F | sort | cut -d: -f2
 echo -e "$YE*********************************************$EN"
+$STATUS
 main_selectind
 }
 
@@ -83,6 +86,7 @@ COMM=$(comm -23 <(ALL_REM) <(ALL))
 echo -e "$YE*********************************************$EN"
 echo "$COMM" 
 echo -e "$YE*********************************************$EN"
+$STATUS
 main_selectind
 }
 
@@ -175,22 +179,44 @@ case "$a2" in
 esac
 }
 
+lst(){
+case "$a2" in
+  -a) list_all ;;
+  -i) list_installed ;;
+  -s) list_system ;;
+  -r) list_removed ;;
+  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+esac
+}
+
 a2=$2
 a3=$3
 case "$1" in
   '') STATUS='' ;;
   -r) STATUS='exit 0'; cli_r ;;
   -i) STATUS='exit 0'; cli_i ;;
+  ls) STATUS='exit 0'; lst ;;
   -h) echo -e "$WHВерсия скрипта $VERSION
-Ключ $EN"$YE"-r$EN - "$WH"задает режим удаления приложений.
-Ключ $EN"$YE"-i$EN - "$WH"задает режим восстановления приложений.
-С параметрами $EN"$YE"1-3$EN - "$WH"задается источник названий приложений.$EN
-"$BL"Пример:$EN
-  "$YE"./run-me.sh -r 1$EN "$WH"запускает удаление по списку$EN "$GR"LIST1$EN, "$WH"Всего 3 списка.
 
-С параметром$EN "$YE"0$EN "$WH"название приложения задается вручную.$EN
-"$BL"Пример:$EN
-  "$YE"./run-me.sh -i 0 com.miui.app$EN "$WH"запускает восстановление приложения $EN"$GR"com.miui.app$EN."; exit 0 ;;
+  Ключ $EN"$YE"-r$EN - "$WH"задает режим удаления приложений.
+  Ключ $EN"$YE"-i$EN - "$WH"задает режим восстановления приложений.
+  Ключ $EN"$YE"ls$EN - "$WH"используя параметры, выводит списки приложений
+    $EN"$GR"-a$N "$WH"- отображает все приложеня.
+    $EN"$GR"-i$N "$WH"- отображает установленные приложения.
+    $EN"$GR"-s$N "$WH"- отображает системные приложения.
+    $EN"$GR"-r$N "$WH"- отображает удалённые приложения.
+       "$BL"Пример:$EN
+          "$RE"./run-me.sh $EN"$YE"ls $EN"$GR"-i$EN "$WH"- отображает список всех установленых пользователем приложений
+
+  Для ключей $EN"$YE"-r$EN "$WH"и$EN "$YE"-i$EN"$WH":
+
+  С параметрами $EN"$GR"1-3$EN - "$WH"задается список названий приложений.$EN
+       "$BL"Пример:$EN
+          "$RE"./run-me.sh $EN"$YE"-r $EN"$GR"1$EN "$WH"- запускает удаление по списку$EN "$GR"LIST1$EN "$WH"(Всего 3 списка)
+
+  С параметром$EN "$GR"0$EN "$WH"название приложения задается вручную.$EN
+       "$BL"Пример:$EN
+          "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 com.miui.app$EN "$WH"- запускает восстановление приложения $EN"$GR"com.miui.app$EN."; exit 0 ;;
   *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 
