@@ -5,7 +5,7 @@ export PATH=./:"$PATH"
 APPS_LIST1=`cat ./LIST1`
 APPS_LIST2=`cat ./LIST2`
 APPS_LIST3=`cat ./LIST3`
-DEV=$(adb devices | tail +2 | cut -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="./connect.sh"
 F='$'
 VERSION='1.0'
@@ -243,8 +243,7 @@ case "$1" in
   -r) STATUS='exit 0'; cli_r ;;
   -i) STATUS='exit 0'; cli_i ;;
   ls) STATUS='exit 0'; lst ;;
-  -h) helpa ;;
-  --help) helpa ;;
+  -h|--help) helpa ;;
   *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 
