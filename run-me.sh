@@ -1,12 +1,12 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=./lib64:"$LD_LIBRARY_PATH"
-export PATH=./:"$PATH"
-APPS_LIST1=`cat ./LIST1`
-APPS_LIST2=`cat ./LIST2`
-APPS_LIST3=`cat ./LIST3`
+export LD_LIBRARY_PATH="$(dirname $0)/lib64":"$LD_LIBRARY_PATH"
+export PATH="$(dirname $0)/":"$PATH"
+APPS_LIST1=`cat "$(dirname $0)"/LIST1`
+APPS_LIST2=`cat "$(dirname $0)"/LIST2`
+APPS_LIST3=`cat "$(dirname $0)"/LIST3`
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
-CONNECT="./connect.sh"
+CONNECT="$(dirname $0)/connect.sh"
 F='$'
 VERSION='1.0'
 
