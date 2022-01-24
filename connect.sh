@@ -2,11 +2,12 @@
 export LD_LIBRARY_PATH=./lib64:"$LD_LIBRARY_PATH"
 export PATH=./:"$PATH"
 
-RE="\e[1;91m"
-GR="\e[1;92m"
-YE="\e[1;93m"
-BL="\e[1;94m"
-WH="\e[1;97m"
+FON="1" # "1" - если фон терминала тёмный, "2;1" - если фон тереминала светлый
+RE="\e[$FON;91m"
+GR="\e[$FON;92m"
+YE="\e[$FON;93m"
+BL="\e[$FON;94m"
+WH="\e[$FON;97m"
 EN="\e[0m"
 
 start () {
