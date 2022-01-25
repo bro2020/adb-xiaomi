@@ -21,10 +21,10 @@ EN="\e[0m"
 worker_rm(){
 for APPS in $APPS_LIST
 do
-adb pull $(adb shell pm path $APPS | cut -d: -f2) ./BACKUP_APP/$APPS.apk && \
+adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP/$APPS.apk && \
 adb shell pm $COMMAND --user 0 $APPS
 done &&
-echo -e "$GRПроцесс $R завершен!$EN"
+echo -e "$GRПроцесс $R успешно завершен!$EN"
 $STATUS
 main_selectind
 }
@@ -37,14 +37,14 @@ $BLПоехали...$EN"
 sleep 2
 for APPS in $APPS_LIST
 do
-adb push ./BACKUP_APP/$APPS.apk /data/local/tmp && \
+adb push "$(dirname $0)"/BACKUP_APP/$APPS.apk /data/local/tmp && \
 adb shell "cd /data/local/tmp/ && \
 chmod +x $APPS.apk && \
 pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && \
 adb shell rm /data/local/tmp/$APPS.apk && \
-rm ./BACKUP_APP/$APPS.apk
+rm "$(dirname $0)"/BACKUP_APP/$APPS.apk
 done &&
-echo -e "$GRПроцесс $R завершен!$EN"
+echo -e "$GRПроцесс $R успешно завершен!$EN"
 $STATUS
 main_selectind
 }
@@ -144,8 +144,8 @@ esac
 
 primary_selecting() {
 echo -e "$YE###################################################################################$EN
-"$RE"Для $EN"$YE"восстановления$EN "$RE"приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-"$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во$EN "$YE"ВКЛЮЧЕННОЕ$EN "$RE"положение$EN
+"$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
+"$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во ВКЛЮЧЕННОЕ положение$EN
 
   "$WH"Введите $EN"$GR"r$EN "$WH"- для удаления приложений
   Введите $EN"$GR"i$EN "$WH"- для восстанолвения приложений
