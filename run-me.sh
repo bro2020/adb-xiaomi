@@ -9,6 +9,7 @@ DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работ
 CONNECT="$(dirname $0)/connect.sh"
 F='$'
 VERSION='1.0'
+date=`date`
 
 FON="1" # "1" - если фон терминала тёмный, "2;1" - если фон тереминала светлый
 RE="\e[$FON;91m"
@@ -19,17 +20,22 @@ WH="\e[$FON;97m"
 EN="\e[0m"
 
 worker_rm(){
+echo -e "$date\nЗапущено удаление приложений:" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
+echo "$APPS: Старт" >> "$(dirname $0)"/worker.log
 adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP/$APPS.apk && \
-adb shell pm $COMMAND --user 0 $APPS
+adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
 done &&
-echo -e "$GRПроцесс $R успешно завершен!$EN"
+echo -e "$GRПроцесс $R успешно завершен!$EN" && \
+echo -e "Удаление завершено!\n" >> "$(dirname $0)"/worker.log || \
+echo -e "Удаление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
 
 worker_restore(){
+echo -e "$date\nЗапущено восстановлеение приложений:" >> "$(dirname $0)"/worker.log
 echo -e "$RE!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
 ! Внимание! На телефоне потребуется вручную разрешить установку приложений  !
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
@@ -37,14 +43,17 @@ $BLПоехали...$EN"
 sleep 2
 for APPS in $APPS_LIST
 do
+echo "$APPS: Старт" >> "$(dirname $0)"/worker.log
 adb push "$(dirname $0)"/BACKUP_APP/$APPS.apk /data/local/tmp && \
 adb shell "cd /data/local/tmp/ && \
 chmod +x $APPS.apk && \
-pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && \
+pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log && \
 adb shell rm /data/local/tmp/$APPS.apk && \
 rm "$(dirname $0)"/BACKUP_APP/$APPS.apk
 done &&
-echo -e "$GRПроцесс $R успешно завершен!$EN"
+echo -e "$GRПроцесс $R успешно завершен!$EN" && \
+echo -e "Восстановление завершено!\n" >> "$(dirname $0)"/worker.log || \
+echo -e "Восстановление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
@@ -223,9 +232,9 @@ echo -e "$WHВерсия скрипта $VERSION
        "$BL"Пример:$EN
           "$RE"./run-me.sh $EN"$YE"-r $EN"$GR"1$EN "$WH"- запускает удаление приложений из списка$EN "$GR"LIST1$EN "$WH"(Всего 3 списка)
 
-  С параметром$EN "$GR"0$EN "$WH"имена приложений задаются вручную через пробел.$EN
+  С параметром$EN "$GR"0$EN "$WH"имена приложений задаются вручную в кавычках через пробел.$EN
        "$BL"Пример:$EN
-          "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 com.miui.app1 com.miui.app2$EN "$WH"- запускает восстановление приложений
+          "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 'com.miui.app1 com.miui.app2'$EN "$WH"- запускает восстановление приложений
        $EN"$GR"com.miui.app1$EN "$WH"и$EN "$GR"com.miui.app2$EN
 
   "$WH"Для простой УСТАНОВКИ приложений, их$EN "$GR"apk$EN "$WH"файлы нужно разместить в директории$EN "$GR"BACKUP_APP$EN.
