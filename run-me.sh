@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $(uname -s) != 'linux' ]]; then
+if [[ $(uname -s) != 'Linux' ]]; then
 export LD_LIBRARY_PATH="$(dirname $0)/adb-macos/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-macos/":"$PATH"
 else
@@ -65,7 +65,7 @@ main_selectind
 
 input(){
 read -p 'Введите название приложения: ' APPS_LIST
-printf ""$YE"_________________________________________________________________________________$EN"
+printf ""$YE"_________________________________________________________________________________$EN\n"
 worker$FUNC
 }
 
@@ -137,9 +137,9 @@ $BLВыбран режим $EN"$GR"$R$EN
 
 "$WH"Введите $EN"$GR"b$EN "$WH"для повторного выбора режима работы скрипта.
 Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
-"$YE"_______________________$EN"
+"$YE"_______________________$EN\n"
 read -p "Сделайте выбор здесь: " m_sel
-printf ""$YE"_______________________$EN"
+printf ""$YE"_______________________$EN\n"
 case $m_sel in
   0) input ;;
   1) APPS_LIST=$APPS_LIST1; worker$FUNC ;;
@@ -165,7 +165,7 @@ printf "$YE#####################################################################
   Введите $EN"$GR"i$EN "$WH"- для восстанолвения приложений
 
 Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
-"$YE"_______________________$EN"
+"$YE"_______________________$EN\n"
 read -p 'Сделайте выбор здесь: ' p_sel
 case $p_sel in
   r) COMMAND='uninstall -k'; R='удаления' FUNC='_rm'; main_selectind ;;
