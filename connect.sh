@@ -50,7 +50,7 @@ STATUS='input_code'; input_ipport1
 }
 
 input_port() {
-printf ""$WH" В найстройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
+printf ""$WH" В настройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
 "$WH" Найдите раздел $EN"$YE"\"Для разработчиков\"$EN "$WH"перейдите в него.
  Найдите пункт $EN"$YE"\"Беспроводная отладка\"$EN "$WH"установите флажок во ВКЛЮЧЕННОЕ положение.
  Нажмите на стрелку $EN"$YE"\">\"$EN "$WH"в этом же пункте. Вы провалитесь в подменю.
@@ -112,7 +112,7 @@ printf "$date \nadb pair to \"$IP\": $PAIR\n\n" >> "$(dirname $0)"/session.log
 printf "$REАвторизация не удалась! Введите значения заново.$EN\n"; sleep 1; input_code
 else
 printf "$date \nadb pair to \"$IP\": $PAIR\n\n" >> "$(dirname $0)"/session.log
-printf ""$GR"Авторизация выполнена успешна!$EN\n"
+printf ""$GR"Авторизация выполнена успешно!$EN\n"
 sleep 1
 worker_connect
 fi
