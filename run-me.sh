@@ -2,6 +2,7 @@
 
 export LD_LIBRARY_PATH="$(dirname $0)/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/":"$PATH"
+env BASHOPTS=xpg_echo POSIXLY_CORRECT=1
 APPS_LIST1=`cat "$(dirname $0)"/LIST1`
 APPS_LIST2=`cat "$(dirname $0)"/LIST2`
 APPS_LIST3=`cat "$(dirname $0)"/LIST3`

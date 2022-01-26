@@ -1,6 +1,7 @@
 #!/bin/bash
 export LD_LIBRARY_PATH="$(dirname $0)/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/":"$PATH"
+env BASHOPTS=xpg_echo POSIXLY_CORRECT=1
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1)
 IP=`cat "$(dirname $0)/SESSION"`
 date=`date`
