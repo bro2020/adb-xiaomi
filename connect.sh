@@ -10,8 +10,8 @@ DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1)
 IP=`cat "$(dirname $0)/SESSION"`
 date=`date`
 
-FON="1" # "1" - если фон терминала тёмный, "2;1" - если фон тереминала светлый
-RE="\e[$FON;91m"
+FON="2;1"
+RE="\e[1;91m"
 GR="\e[$FON;92m"
 YE="\e[$FON;93m"
 BL="\e[$FON;94m"
