@@ -1,7 +1,12 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH="$(dirname $0)/lib64":"$LD_LIBRARY_PATH"
-export PATH="$(dirname $0)/":"$PATH"
+if [[ $(uname -s) != 'linux' ]]; then
+export LD_LIBRARY_PATH="$(dirname $0)/adb-macos/lib64":"$LD_LIBRARY_PATH"
+export PATH="$(dirname $0)/adb-macos/":"$PATH"
+else
+export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
+export PATH="$(dirname $0)/adb-linux/":"$PATH"
+fi
 APPS_LIST1=`cat "$(dirname $0)"/LIST1`
 APPS_LIST2=`cat "$(dirname $0)"/LIST2`
 APPS_LIST3=`cat "$(dirname $0)"/LIST3`
@@ -20,23 +25,23 @@ WH="\e[$FON;97m"
 EN="\e[0m"
 
 worker_rm(){
-echo -e "$date\nЗапущено удаление приложений:" >> "$(dirname $0)"/worker.log
+printf "$date\nЗапущено удаление приложений:" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
 echo "$APPS: Старт" >> "$(dirname $0)"/worker.log
 adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP/$APPS.apk && \
 adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
 done &&
-echo -e "$GRПроцесс $R успешно завершен!$EN" && \
-echo -e "Удаление завершено!\n" >> "$(dirname $0)"/worker.log || \
-echo -e "Удаление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
+printf "$GRПроцесс $R успешно завершен!$EN" && \
+printf "Удаление завершено!\n" >> "$(dirname $0)"/worker.log || \
+printf "Удаление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
 
 worker_restore(){
-echo -e "$date\nЗапущено восстановлеение приложений:" >> "$(dirname $0)"/worker.log
-echo -e "$RE!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
+printf "$date\nЗапущено восстановлеение приложений:" >> "$(dirname $0)"/worker.log
+printf "$RE!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
 ! Внимание! На телефоне потребуется вручную разрешить установку приложений  !
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
 $BLПоехали...$EN"
@@ -51,45 +56,45 @@ pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS
 adb shell rm /data/local/tmp/$APPS.apk && \
 rm "$(dirname $0)"/BACKUP_APP/$APPS.apk
 done &&
-echo -e "$GRПроцесс $R успешно завершен!$EN" && \
-echo -e "Восстановление завершено!\n" >> "$(dirname $0)"/worker.log || \
-echo -e "Восстановление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
+printf "$GRПроцесс $R успешно завершен!$EN" && \
+printf "Восстановление завершено!\n" >> "$(dirname $0)"/worker.log || \
+printf "Восстановление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
 
 input(){
 read -p 'Введите название приложения: ' APPS_LIST
-echo -e ""$YE"_________________________________________________________________________________$EN"
+printf ""$YE"_________________________________________________________________________________$EN"
 worker$FUNC
 }
 
 list_all(){
-echo -e "$YE*********************************************$EN
+printf "$YE*********************************************$EN
 "$YE"*************  Все приложения  **************$EN
 "$YE"*********************************************$EN"
 adb shell pm list packages -u | grep $F | sort | cut -d: -f2
-echo -e "$YE*********************************************$EN"
+printf "$YE*********************************************$EN"
 $STATUS
 main_selectind
 }
 
 list_installed(){
-echo -e "$YE*********************************************$EN
+printf "$YE*********************************************$EN
 "$YE"********  Установленные приложения  *********$EN
 "$YE"*********************************************$EN"
 adb shell pm list packages -3 | grep $F | sort | cut -d: -f2
-echo -e "$YE*********************************************$EN"
+printf "$YE*********************************************$EN"
 $STATUS
 main_selectind
 }
 
 list_system(){
-echo -e "$YE*********************************************$EN
+printf "$YE*********************************************$EN
 "$YE"**********  Системные приложения  ***********$EN
 "$YE"*********************************************$EN"
 adb shell pm list packages -s | grep $F | sort | cut -d: -f2
-echo -e "$YE*********************************************$EN"
+printf "$YE*********************************************$EN"
 $STATUS
 main_selectind
 }
@@ -99,11 +104,11 @@ ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
 COMM=$(comm -23 <(ALL_REM) <(ALL))
-echo -e "$YE*********************************************$EN
+printf "$YE*********************************************$EN
 "$YE"**********  Удаленные приложения  ***********$EN
 "$YE"*********************************************$EN"
 echo "$COMM" 
-echo -e "$YE*********************************************$EN"
+printf "$YE*********************************************$EN"
 $STATUS
 main_selectind
 }
@@ -114,7 +119,7 @@ main_selectind
 }
 
 main_selectind() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 $BLВыбран режим $EN"$GR"$R$EN
   "$WH"Введите $EN"$GR"0$N "$WH"- для выборочного $R (Можно ввести несколько имён приложений через пробел).
   Нажмите $EN"$GR"1$N "$WH"- для $R по списку $EN"$GR"LIST1$N"$WH".
@@ -134,7 +139,7 @@ $BLВыбран режим $EN"$GR"$R$EN
 Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
 "$YE"_______________________$EN"
 read -p "Сделайте выбор здесь: " m_sel
-echo -e ""$YE"_______________________$EN"
+printf ""$YE"_______________________$EN"
 case $m_sel in
   0) input ;;
   1) APPS_LIST=$APPS_LIST1; worker$FUNC ;;
@@ -147,12 +152,12 @@ case $m_sel in
   f) set_filter ;;
   b) primary_selecting ;;
   q) exit 0 ;;
-  *) echo -e "$REНеверный ввод!$EN"; main_selectind ;;
+  *) printf "$REНеверный ввод!$EN"; main_selectind ;;
 esac
 }
 
 primary_selecting() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
 "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во ВКЛЮЧЕННОЕ положение$EN
 
@@ -166,19 +171,19 @@ case $p_sel in
   r) COMMAND='uninstall -k'; R='удаления' FUNC='_rm'; main_selectind ;;
   i) COMMAND='install'; R='восстановления' FUNC='_restore'; main_selectind ;;
   q) exit 0 ;;
-  *) echo -e "$REНеверный ввод!$EN"; primary_selecting ;;
+  *) printf "$REНеверный ввод!$EN"; primary_selecting ;;
 esac
 }
 
 conn() {
-echo -e "$WH  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона
+printf "$WH  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона
   Введите $EN"$GR"n$EN "$WH"для завершения этого скрипта$EN
-"$YE"_______________________$EN"
+"$YE"_______________________$EN\n"
 read -p "Сделайте выбор здесь: " con
 case $con in
   y) bash $CONNECT; primary_selecting ;;
   n) exit 1 ;;
-  *) echo -e "$REНеверный ввод!$EN"; conn ;;
+  *) printf "$REНеверный ввод!$EN"; conn ;;
 esac
 }
 
@@ -188,7 +193,7 @@ case "$a2" in
   1) APPS_LIST=$APPS_LIST1 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
   2) APPS_LIST=$APPS_LIST2 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
   3) APPS_LIST=$APPS_LIST3 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
-  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 
 }
@@ -199,7 +204,7 @@ case "$a2" in
   1) APPS_LIST=$APPS_LIST1 COMMAND='install'; R='восстановления'; worker_restore ;;
   2) APPS_LIST=$APPS_LIST2 COMMAND='install'; R='восстановления'; worker_restore ;;
   3) APPS_LIST=$APPS_LIST3 COMMAND='install'; R='восстановления'; worker_restore ;;
-  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 }
 
@@ -209,12 +214,12 @@ case "$a2" in
   -i) list_installed ;;
   -s) list_system ;;
   -r) list_removed ;;
-  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 }
 
 helpa() {
-echo -e "$WHВерсия скрипта $VERSION
+printf "$WHВерсия скрипта $VERSION
 
   Ключ $EN"$YE"-r$EN - "$WH"задает режим УДАЛЕНИЯ приложений.
   Ключ $EN"$YE"-i$EN - "$WH"задает режим ВОССТАНОВЛЕНИЯ приложений.
@@ -253,15 +258,15 @@ case "$1" in
   -i) STATUS='exit 0'; cli_i ;;
   ls) STATUS='exit 0'; lst ;;
   -h|--help) helpa ;;
-  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 
 if [[ $DEV = '' ]]; then
-echo -e "$WHВерсия скрипта $VERSION"$EN"
-"$RE"Телефон не обнаружен!$EN"
+printf ""$WH"Версия скрипта $VERSION"$EN"
+"$RE"Телефон не обнаружен!$EN\n"
 conn
 else
-echo -e "$WHВерсия скрипта $VERSION"$EN"
-"$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN"
+printf "$WHВерсия скрипта $VERSION"$EN"
+"$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi

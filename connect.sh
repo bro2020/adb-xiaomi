@@ -15,11 +15,11 @@ EN="\e[0m"
 
 check_dev() {
 if [[ $DEV != '' ]]; then
-echo -e "$GRПодключение к "$YE"\"$DEV\"$EN "$GR"уже установлено!$EN"
+printf "$GRПодключение к "$YE"\"$DEV\"$EN "$GR"уже установлено!$EN"
 exit 0
 else
 $STATUS
-echo -e "$YEАктивные подключения не найдены!$EN"
+printf "$YEАктивные подключения не найдены!$EN"
 exit 0
 fi
 }
@@ -27,7 +27,7 @@ fi
 check_ip() {
 IP=$IP
 if [[ $IP != '' ]]; then
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$BL"Обнаружен ранее подключенный IP-адрес:$EN "$GR"\"$IP\"$EN
   "$WH"Введите$EN "$GR"y$EN "$WH"для подключениче к этому устройству (Потребуется ввести только$EN "$YE"Порт$EN).
   Введите$EN "$GR"n$EN "$WH"для нового полного подключения с авторизацией.$EN
@@ -37,15 +37,15 @@ read -p "Сделайте выбор здесь: " session
 case "$session" in
   y) input_port ;;
   n) STATUS='input_code'; input_ipport1;;
-  d) echo '' > "$(dirname $0)/SESSION" && echo -e "$GRГОТОВО$EN!" && IP=`cat "$(dirname $0)/SESSION"`; check_ip;;
-  *) echo -e "$REНеверный ввод, попробуйте ещё раз.$EN" check_ip ;;
+  d) echo '' > "$(dirname $0)/SESSION" && printf "$GRГОТОВО$EN!" && IP=`cat "$(dirname $0)/SESSION"`; check_ip;;
+  *) printf "$REНеверный ввод, попробуйте ещё раз.$EN" check_ip ;;
 esac
 fi
 STATUS='input_code'; input_ipport1
 }
 
 input_port() {
-echo -e "$WH В найстройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
+printf "$WH В найстройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
 "$WH" Найдите раздел $EN"$YE"\"Для разработчиков\"$EN "$WH"перейдите в него.
  Найдите пункт $EN"$YE"\"Беспроводная отладка\"$EN "$WH"установите флажок во ВКЛЮЧЕННОЕ положение.
  Нажмите на стрелку $EN"$YE"\">\"$EN "$WH"в этом же пункте. Вы провалитесь в подменю.
@@ -62,13 +62,13 @@ worker_connect
 
 input_ipport1() {
 if [[ $DEV = '' ]]; then
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$GR"Подключение телефона через Wi-Fi adb...$EN"
 else
-echo -e "$GRПодключение к "$YE"\"$DEV\"$EN "$GR"уже установлено!$EN"
+printf "$GRПодключение к "$YE"\"$DEV\"$EN "$GR"уже установлено!$EN"
 exit 0
 fi
-echo -e "$WH В найстройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
+printf "$WH В найстройках телефона зайдите в раздел $EN"$YE"\"Расширенные настройки\"$EN
 "$WH" Найдите раздел $EN"$YE"\"Для разработчиков\"$EN "$WH"перейдите в него.
  Найдите пункт $EN"$YE"\"Беспроводная отладка\"$EN "$WH"установите флажок во ВКЛЮЧЕННОЕ положение.
  Нажмите на стрелку $EN"$YE"\">\"$EN "$WH"в этом же пункте. Вы провалитесь в подменю.
@@ -81,13 +81,13 @@ $STATUS
 }
 
 input_code() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$WH" Теперь нажмите на пункт $EN"$YE"\"Подключение устройств через код подключения\"$EN.
 "$WH" Вы увидите $EN"$YE"\"Код подключения Wi-Fi\"$EN "$WH"большими шрифтом.
 "$BL"    Пример:$EN "$YE"Код подключения Wi-Fi:$EN "$GR"850651$EN
 "$YE"__________________________________________________________$EN"
 read -p "Введите значение из этого поля здесь: " CODE
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 $WH "$WH"Ниже отображается$EN "$YE"\"IP-адрес & Порт\"$EN "$WH"сервиса авторизации.$EN
 "$BL"    Пример:$EN "$YE"IP-адрес & Порт:$EN "$GR"192.168.1.2:40105$EN
 "$WH" Сейчас нужно ввести только$EN "$YE"Порт$EN "$WH"- число которое расположено после двоеточия.$EN
@@ -98,30 +98,30 @@ worker_pair
 }
 
 worker_pair() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$GR"Выполняется авторизация...$EN"
 IP=$(echo $IPPORT1 | cut -d: -f1)
 PAIR=$(adb pair "$IP":"$PORT2" $CODE | cut -d' ' -f1)
 if [[ $PAIR != 'Successfully' ]]; then
-echo -e "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
-echo -e "$REАвторизация не удалась! Введите значения заново.$EN"; sleep 1; input_code
+printf "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
+printf "$REАвторизация не удалась! Введите значения заново.$EN"; sleep 1; input_code
 else
-echo -e "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
-echo -e "$GRАвторизация выполнена успешна!$EN"
+printf "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
+printf "$GRАвторизация выполнена успешна!$EN"
 sleep 1
 worker_connect
 fi
 }
 
 worker_connect() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$GR"Выполняется подключение...$EN"
 CONN=$(adb connect "$IPPORT1" | cut -d' ' -f1)
 sleep 1
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1)
 if [[ $DEV = '' ]]; then
-echo -e "$date \nadb connect to \"$IPPORT1\": Failure \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
-echo -e "$REПодключение не удалось!$EN
+printf "$date \nadb connect to \"$IPPORT1\": Failure \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
+printf "$REПодключение не удалось!$EN
 "$WH"Через 5 секунд запуститься повторная попытка ввода данных.
 Зажмите$EN "$GR"Ctrl + c$EN "$WH"для отмены и завершения работы скрипта подключения.$EN
 "$YE"###################################################################################$EN"
@@ -129,8 +129,8 @@ sleep 8
 STATUS='worker_connect'
 $STATUS2
 else
-echo -e "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
-echo -e "$GRПодключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
+printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
+printf "$GRПодключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
 "$YE"###################################################################################$EN"
 echo "$IP" > "$(dirname $0)/SESSION"
 exit 0
@@ -139,31 +139,31 @@ fi
 
 start_pair_cli() {
 IP=$(echo $IPPORT1 | cut -d: -f1)
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$GR"Выполняется авторизация...$EN"
 PAIR=$(adb pair "$IP":"$PORT2" $CODE | cut -d' ' -f1)
 if [[ $PAIR != 'Successfully' ]]; then
-echo -e "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
-echo -e "$REАвторизация не удалась!$EN"; exit 1
+printf "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
+printf "$REАвторизация не удалась!$EN"; exit 1
 else
-echo -e "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
-echo -e "$GRАвторизация выполнена успешно!$EN"
+printf "$date \nadb pair to \"$IP\": $PAIR\n" >> "$(dirname $0)"/session.log
+printf "$GRАвторизация выполнена успешно!$EN"
 start_connect_cli
 fi
 }
 
 start_connect_cli() {
-echo -e "$YE###################################################################################$EN
+printf "$YE###################################################################################$EN
 "$GR"Выполняется подключение...$EN"
 CONN=$(adb connect "$IPPORT1" | cut -d' ' -f1)
 sleep 1
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1)
 if [[ $DEV = '' ]]; then
-echo -e "$date \nadb connect to \"$IPPORT1\": Failure \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
-echo -e "$REПодключение не удалось!$EN"; exit 1
+printf "$date \nadb connect to \"$IPPORT1\": Failure \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
+printf "$REПодключение не удалось!$EN"; exit 1
 else
-echo -e "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
-echo -e ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено$EN
+printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
+printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено$EN
 "$YE"###################################################################################$EN"
 echo "$IP" > "$(dirname $0)/SESSION"
 exit 0
@@ -172,12 +172,12 @@ fi
 
 session_list() {
 if [[ $IP = '' ]]; then
-echo -e "
+printf "
 $WHРанее подключения не проводились.$EN
 "
 exit 0
 else
-echo -e "
+printf "
 $WHРанее проводилось подключение к устройству с IP-адресом:$EN "$GR"\"$IP\"$EN
 
   Для быстрого подключения к этому устройству введите:
@@ -191,7 +191,7 @@ fi
 }
 
 helpa() {
-echo -e "
+printf "
     $RE./connect.sh$EN "$YE"-c$EN или "$YE"--cli$EN "$GR"IP:PORT1$EN "$GR"CODE$EN "$GR"PORT2$EN
 
   "$GR"IP:PORT1$EN "$WH"- \"IP-адрес & Порт\"$EN из окна "$WH"\"Беспроводная отладка\"$EN.
@@ -229,6 +229,6 @@ case "$1" in
   -s|--session) session_list ;;
   -d|--disconnect) adb disconnect ;;
   -h|--help) helpa ;;
-  *) echo -e "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
 esac
 
