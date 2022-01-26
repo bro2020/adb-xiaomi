@@ -25,26 +25,26 @@ WH="\e[$FON;97m"
 EN="\e[0m"
 
 worker_rm(){
-printf "$date\nЗапущено удаление приложений:" >> "$(dirname $0)"/worker.log
+printf "$date\nЗапущено удаление приложений:\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
 echo "$APPS: Старт" >> "$(dirname $0)"/worker.log
 adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP/$APPS.apk && \
 adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
 done &&
-printf "$GRПроцесс $R успешно завершен!$EN" && \
-printf "Удаление завершено!\n" >> "$(dirname $0)"/worker.log || \
-printf "Удаление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
+printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
+printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
+printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
 
 worker_restore(){
-printf "$date\nЗапущено восстановлеение приложений:" >> "$(dirname $0)"/worker.log
-printf "$RE!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
+printf "$date\nЗапущено восстановлеение приложений:\n" >> "$(dirname $0)"/worker.log
+printf ""$RE"!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
 ! Внимание! На телефоне потребуется вручную разрешить установку приложений  !
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
-$BLПоехали...$EN"
+$BLПоехали...$EN\n"
 sleep 2
 for APPS in $APPS_LIST
 do
@@ -56,9 +56,9 @@ pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS
 adb shell rm /data/local/tmp/$APPS.apk && \
 rm "$(dirname $0)"/BACKUP_APP/$APPS.apk
 done &&
-printf "$GRПроцесс $R успешно завершен!$EN" && \
-printf "Восстановление завершено!\n" >> "$(dirname $0)"/worker.log || \
-printf "Восстановление завершено с ошибками!\n" >> "$(dirname $0)"/worker.log
+printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
+printf "Восстановление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
+printf "Восстановление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
 $STATUS
 main_selectind
 }
@@ -70,31 +70,31 @@ worker$FUNC
 }
 
 list_all(){
-printf "$YE*********************************************$EN
+printf ""$YE"*********************************************$EN
 "$YE"*************  Все приложения  **************$EN
-"$YE"*********************************************$EN"
+"$YE"*********************************************$EN\n"
 adb shell pm list packages -u | grep $F | sort | cut -d: -f2
-printf "$YE*********************************************$EN"
+printf ""$YE"*********************************************$EN\n"
 $STATUS
 main_selectind
 }
 
 list_installed(){
-printf "$YE*********************************************$EN
+printf ""$YE"*********************************************$EN
 "$YE"********  Установленные приложения  *********$EN
-"$YE"*********************************************$EN"
+"$YE"*********************************************$EN\n"
 adb shell pm list packages -3 | grep $F | sort | cut -d: -f2
-printf "$YE*********************************************$EN"
+printf ""$YE"*********************************************$EN\n"
 $STATUS
 main_selectind
 }
 
 list_system(){
-printf "$YE*********************************************$EN
+printf ""$YE"*********************************************$EN
 "$YE"**********  Системные приложения  ***********$EN
-"$YE"*********************************************$EN"
+"$YE"*********************************************$EN\n"
 adb shell pm list packages -s | grep $F | sort | cut -d: -f2
-printf "$YE*********************************************$EN"
+printf ""$YE"*********************************************$EN\n"
 $STATUS
 main_selectind
 }
@@ -104,11 +104,11 @@ ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
 COMM=$(comm -23 <(ALL_REM) <(ALL))
-printf "$YE*********************************************$EN
+printf ""$YE"*********************************************$EN
 "$YE"**********  Удаленные приложения  ***********$EN
-"$YE"*********************************************$EN"
+"$YE"*********************************************$EN\n"
 echo "$COMM" 
-printf "$YE*********************************************$EN"
+printf ""$YE"*********************************************$EN\n"
 $STATUS
 main_selectind
 }
@@ -119,8 +119,8 @@ main_selectind
 }
 
 main_selectind() {
-printf "$YE###################################################################################$EN
-$BLВыбран режим $EN"$GR"$R$EN
+printf ""$YE"###################################################################################$EN
+"$BL"Выбран режим $EN"$GR"$R$EN
   "$WH"Введите $EN"$GR"0$N "$WH"- для выборочного $R (Можно ввести несколько имён приложений через пробел).
   Нажмите $EN"$GR"1$N "$WH"- для $R по списку $EN"$GR"LIST1$N"$WH".
   Нажмите $EN"$GR"2$N "$WH"- для $R по списку $EN"$GR"LIST2$N"$WH".
@@ -157,7 +157,7 @@ esac
 }
 
 primary_selecting() {
-printf "$YE###################################################################################$EN
+printf ""$YE"###################################################################################$EN
 "$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
 "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во ВКЛЮЧЕННОЕ положение$EN
 
@@ -171,18 +171,18 @@ case $p_sel in
   r) COMMAND='uninstall -k'; R='удаления' FUNC='_rm'; main_selectind ;;
   i) COMMAND='install'; R='восстановления' FUNC='_restore'; main_selectind ;;
   q) exit 0 ;;
-  *) printf "$REНеверный ввод!$EN"; primary_selecting ;;
+  *) printf ""$RE"Неверный ввод!$EN\n"; primary_selecting ;;
 esac
 }
 
 conn() {
-printf "$WH  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона
-  Введите $EN"$GR"n$EN "$WH"для завершения этого скрипта$EN
+printf ""$WH"  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона
+  Введите $EN"$GR"q$EN "$WH"для завершения этого скрипта$EN
 "$YE"_______________________$EN\n"
 read -p "Сделайте выбор здесь: " con
 case $con in
   y) bash $CONNECT; primary_selecting ;;
-  n) exit 1 ;;
+  q) exit 0 ;;
   *) printf "$REНеверный ввод!$EN"; conn ;;
 esac
 }
@@ -193,7 +193,7 @@ case "$a2" in
   1) APPS_LIST=$APPS_LIST1 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
   2) APPS_LIST=$APPS_LIST2 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
   3) APPS_LIST=$APPS_LIST3 COMMAND='uninstall -k'; R='удаления'; worker_rm ;;
-  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
 
 }
@@ -204,7 +204,7 @@ case "$a2" in
   1) APPS_LIST=$APPS_LIST1 COMMAND='install'; R='восстановления'; worker_restore ;;
   2) APPS_LIST=$APPS_LIST2 COMMAND='install'; R='восстановления'; worker_restore ;;
   3) APPS_LIST=$APPS_LIST3 COMMAND='install'; R='восстановления'; worker_restore ;;
-  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
 }
 
@@ -214,12 +214,12 @@ case "$a2" in
   -i) list_installed ;;
   -s) list_system ;;
   -r) list_removed ;;
-  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
 }
 
 helpa() {
-printf "$WHВерсия скрипта $VERSION
+printf "\n"$WH"Версия скрипта $VERSION
 
   Ключ $EN"$YE"-r$EN - "$WH"задает режим УДАЛЕНИЯ приложений.
   Ключ $EN"$YE"-i$EN - "$WH"задает режим ВОССТАНОВЛЕНИЯ приложений.
@@ -247,7 +247,7 @@ printf "$WHВерсия скрипта $VERSION
   (без$EN "$GR".apk$EN "$WH"вконце).$EN
 
   "$RE"Для УСТАНОВКИ и ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-  "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во$EN "$YE"ВКЛЮЧЕННОЕ$EN "$RE"положение.$EN"; exit 0
+  "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во$EN "$YE"ВКЛЮЧЕННОЕ$EN "$RE"положение.$EN\n\n"; exit 0
 }
 
 a2=$2
@@ -258,7 +258,7 @@ case "$1" in
   -i) STATUS='exit 0'; cli_i ;;
   ls) STATUS='exit 0'; lst ;;
   -h|--help) helpa ;;
-  *) printf "$REДопущена ошибка в написании ключей$EN"; exit 1 ;;
+  *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
 
 if [[ $DEV = '' ]]; then
@@ -266,7 +266,7 @@ printf ""$WH"Версия скрипта $VERSION"$EN"
 "$RE"Телефон не обнаружен!$EN\n"
 conn
 else
-printf "$WHВерсия скрипта $VERSION"$EN"
+printf ""$WH"Версия скрипта $VERSION"$EN"
 "$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi
