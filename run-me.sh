@@ -7,13 +7,11 @@ else
 export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-linux/":"$PATH"
 fi
-APPS_LIST1=`cat "$(dirname $0)"/LIST1`
-APPS_LIST2=`cat "$(dirname $0)"/LIST2`
-APPS_LIST3=`cat "$(dirname $0)"/LIST3`
-DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+
+DEV=$(adb devices -l | tail +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 F='$'
-VERSION='1.0'
+VERSION='1.1'
 date=`date`
 
 FON="2;1"
@@ -36,6 +34,7 @@ printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
 printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
 printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
 $STATUS
+sleep 2
 main_selectind
 }
 
@@ -60,6 +59,7 @@ printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
 printf "Восстановление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
 printf "Восстановление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
 $STATUS
+sleep 2
 main_selectind
 }
 
@@ -70,31 +70,37 @@ worker$FUNC
 }
 
 list_all(){
-printf ""$YE"*********************************************$EN
-"$YE"*************  Все приложения  **************$EN
-"$YE"*********************************************$EN\n"
-adb shell pm list packages -u | grep $F | sort | cut -d: -f2
-printf ""$YE"*********************************************$EN\n"
+printf ""$YE"*******************************************************$EN
+"$YE"******************$EN  Все приложения  "$YE"*******************$EN
+"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"*******************************************************$EN
+"$YE"Всего:$EN $(adb shell pm list packages -u | grep $F | wc -l)
+$(adb shell pm list packages -u | grep $F | sort | cut -d: -f2)
+"$YE"*******************************************************$EN\n" | less -R
 $STATUS
 main_selectind
 }
 
 list_installed(){
-printf ""$YE"*********************************************$EN
-"$YE"********  Установленные приложения  *********$EN
-"$YE"*********************************************$EN\n"
-adb shell pm list packages -3 | grep $F | sort | cut -d: -f2
-printf ""$YE"*********************************************$EN\n"
+printf ""$YE"*******************************************************$EN
+"$YE"*************$EN  Установленные приложения  "$YE"**************$EN
+"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"*******************************************************$EN
+"$YE"Всего:$EN $(adb shell pm list packages -3 | grep $F | wc -l)
+$(adb shell pm list packages -3 | grep $F | sort | cut -d: -f2)
+"$YE"*******************************************************$EN\n" | less -R
 $STATUS
 main_selectind
 }
 
 list_system(){
-printf ""$YE"*********************************************$EN
-"$YE"**********  Системные приложения  ***********$EN
-"$YE"*********************************************$EN\n"
-adb shell pm list packages -s | grep $F | sort | cut -d: -f2
-printf ""$YE"*********************************************$EN\n"
+printf ""$YE"*******************************************************$EN
+"$YE"***************$EN  Системные приложения  "$YE"****************$EN
+"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"*******************************************************$EN
+"$YE"Всего:$EN $(adb shell pm list packages -s | grep $F | wc -l)
+$(adb shell pm list packages -s | grep $F | sort | cut -d: -f2)
+"$YE"*******************************************************$EN\n" | less -R
 $STATUS
 main_selectind
 }
@@ -104,11 +110,13 @@ ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
 COMM=$(comm -23 <(ALL_REM) <(ALL))
-printf ""$YE"*********************************************$EN
-"$YE"**********  Удаленные приложения  ***********$EN
-"$YE"*********************************************$EN\n"
-echo "$COMM" 
-printf ""$YE"*********************************************$EN\n"
+printf ""$YE"*******************************************************$EN
+"$YE"***************$EN  Удаленные приложения  "$YE"****************$EN
+"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"*******************************************************$EN
+"$YE"Всего:$EN $(echo "$COMM" | wc -l)
+$(echo "$COMM" )
+"$YE"*******************************************************$EN\n" | less -R
 $STATUS
 main_selectind
 }
@@ -118,15 +126,50 @@ read -p "Введите слово фильтра: " F
 main_selectind
 }
 
+echo_list() {
+read -p 'Ввведите номер списка: ' n_lst
+ECHO_LST=$(cat "$(dirname $0)"/LIST"$n_lst".txt | grep $F | cut -d' ' -f1)
+printf ""$YE"*******************************************************$EN
+"$YE"************$EN  Список приложений LIST"$n_lst".txt "$YE"*************$EN
+"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"*******************************************************$EN
+"$YE"Всего:$EN $(echo "$ECHO_LST" | wc -l)
+$(echo "$ECHO_LST")
+"$YE"*******************************************************$EN\n" | less -R
+main_selectind
+}
+
+add_to_list() {
+read -p "Введите номер списка: " nom_list
+read -p "Введите имя приложения: " name_app
+echo "$name_app" >> "$(dirname $0)"/LIST"$nom_list".txt && \
+printf ""$GR"Добавление приложения$EN "$YE""$name_app"$EN "$GR"в список$EN "$YE"LIST"$nom_list".txt$EN"$GR" ...$EN\n"
+sleep 1
+main_selectind
+}
+
+del_to_list() {
+read -p "Введите номер списка: " nom_list
+read -p "Введите имя приложения: " name_app
+sed -i "/^$name_app$/d" "$(dirname $0)"/LIST"$nom_list".txt && \
+printf ""$GR"Удаление приложение$EN "$YE""$name_app"$EN "$GR"из списка$EN "$YE"LIST"$nom_list".txt$EN"$GR" ...$EN\n"
+sleep 1
+main_selectind
+}
+
 main_selectind() {
+LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
+LS=$(basename -a "$(dirname $0)"/LIST*.txt | tr '\n' ' ')
 printf ""$YE"###################################################################################$EN
 "$BL"Выбран режим $EN"$GR"$R$EN
   "$WH"Введите $EN"$GR"0$N "$WH"- для выборочного $R (Можно ввести несколько имён приложений через пробел).
-  Нажмите $EN"$GR"1$N "$WH"- для $R по списку $EN"$GR"LIST1$N"$WH".
-  Нажмите $EN"$GR"2$N "$WH"- для $R по списку $EN"$GR"LIST2$N"$WH".
-  Нажмите $EN"$GR"3$N "$WH"- для $R по списку $EN"$GR"LIST3$N"$WH".$EN
+  Введите $EN"$GR"1...n$EN "$WH"- для $R по списку $EN"$GR"LIST1...n$EN"$WH".
+  Обнаруженные списки:$EN "$YE"$LS\n$EN
 "$BL"Дополнительные опции:$EN
-  "$WH"Введите $EN"$GR"a$N "$WH"- для отображения всех приложений.
+  "$WH"Введите $EN"$GR"ls$N "$WH"- для выбора списка приложений и отображения его содержимого.
+  Введите $EN"$GR"add$N "$WH"- для добавления нового имени приложения в список.
+  Введите $EN"$GR"del$N "$WH"- для удаления имени приложения из списка.
+  Введите $EN"$GR"a$N "$WH"- для отображения всех приложений.
   Введите $EN"$GR"i$N "$WH"- для отображения установленных приложений.
   Введите $EN"$GR"s$N "$WH"- для отображения системных приложений.
   Введите $EN"$GR"r$N "$WH"- для отображения удалённых приложений.
@@ -142,9 +185,10 @@ read -p "Сделайте выбор здесь: " m_sel
 printf ""$YE"_______________________$EN\n"
 case $m_sel in
   0) input ;;
-  1) APPS_LIST=$APPS_LIST1; worker$FUNC ;;
-  2) APPS_LIST=$APPS_LIST2; worker$FUNC ;;
-  3) APPS_LIST=$APPS_LIST3; worker$FUNC ;;
+  [$LS_N]) APPS_LIST=$(<"$(dirname $0)"/LIST"$m_sel".txt); worker$FUNC ;;
+  ls) echo_list ;;
+  add) add_to_list ;;
+  del) del_to_list ;;
   a) list_all ;;
   i) list_installed ;;
   s) list_system ;;
@@ -152,7 +196,7 @@ case $m_sel in
   f) set_filter ;;
   b) primary_selecting ;;
   q) exit 0 ;;
-  *) printf "$REНеверный ввод!$EN"; main_selectind ;;
+  *) printf "$REНеверный ввод!$EN\n"; sleep 2; main_selectind ;;
 esac
 }
 
@@ -181,7 +225,7 @@ printf ""$WH"  Введите $EN"$GR"y$EN "$WH"для запуска скрип
 "$YE"_______________________$EN\n"
 read -p "Сделайте выбор здесь: " con
 case $con in
-  y) bash $CONNECT; primary_selecting ;;
+  y) RUN_STATUS="source $0" source $CONNECT; primary_selecting ;;
   q) exit 0 ;;
   *) printf "$REНеверный ввод!$EN"; conn ;;
 esac

@@ -7,7 +7,7 @@ export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-linux/":"$PATH"
 fi
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1)
-IP=`cat "$(dirname $0)/SESSION"`
+IP=`cat "$(dirname $0)/SESSION.txt"`
 date=`date`
 
 FON="2;1"
@@ -34,15 +34,17 @@ IP=$IP
 if [[ $IP != '' ]]; then
 printf ""$YE"###################################################################################$EN
 "$BL"Обнаружен ранее подключенный IP-адрес:$EN "$GR"\"$IP\"$EN
-  "$WH"Введите$EN "$GR"y$EN "$WH"для подключениче к этому устройству (Потребуется ввести только$EN "$YE"Порт$EN).
-  "$WH"Введите$EN "$GR"n$EN "$WH"для нового полного подключения с авторизацией.$EN
-  "$WH"Введите$EN "$GR"d$EN "$WH"для удаления текущего IP из списка, если он не актуален.
+  "$WH"Введите$EN "$GR"y$EN "$WH"для подключениче к этому устройству (Потребуется ввести только$EN "$YE"Порт$EN"$WH").
+  Введите$EN "$GR"n$EN "$WH"для нового полного подключения с авторизацией.
+  Введите$EN "$GR"d$EN "$WH"для удаления текущего IP из списка, если он не актуален.
+Введите$EN "$GR"q$EN "$WH"Для завершение работы скрипта.$EN
 "$YE"_________________________________________________________$EN\n"
 read -p "Сделайте выбор здесь: " session
 case "$session" in
   y) input_port ;;
+  q) exit 0 ;;
   n) STATUS='input_code'; input_ipport1;;
-  d) echo '' > "$(dirname $0)/SESSION" && printf "$GRГОТОВО$EN!" && IP=`cat "$(dirname $0)/SESSION"`; check_ip;;
+  d) echo '' > "$(dirname $0)/SESSION.txt" && printf "$GRГОТОВО$EN!" && IP=`cat "$(dirname $0)/SESSION.txt"`; check_ip;;
   *) printf ""$RE"Неверный ввод, попробуйте ещё раз.$EN\n"; check_ip ;;
 esac
 fi
@@ -137,7 +139,8 @@ else
 printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n\n" >> "$(dirname $0)"/session.log
 printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
 "$YE"###################################################################################$EN\n"
-echo "$IP" > "$(dirname $0)/SESSION"
+echo "$IP" > "$(dirname $0)/SESSION.txt"
+$RUN_STATUS
 exit 0
 fi
 }
@@ -170,7 +173,7 @@ else
 printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n" >> "$(dirname $0)"/session.log
 printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено$EN
 "$YE"###################################################################################$EN\n"
-echo "$IP" > "$(dirname $0)/SESSION"
+echo "$IP" > "$(dirname $0)/SESSION.txt"
 exit 0
 fi
 }
