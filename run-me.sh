@@ -8,7 +8,7 @@ export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-linux/":"$PATH"
 fi
 
-DEV=$(adb devices -l | tail +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 F='$'
 VERSION='1.1'
