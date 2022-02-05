@@ -129,7 +129,7 @@ IP=$(echo $IPPORT1 | cut -d: -f1)
 PAIR=$(adb pair "$IP":"$PORT2" $CODE | cut -d' ' -f1)
 if [[ $PAIR != 'Successfully' ]]; then
 printf "$date \nadb pair to \"$IP\": $PAIR\n\n" >> "$(dirname $0)"/session.log
-printf "$REАвторизация не удалась! Введите значения заново.$EN\n"; sleep 1; input_code
+printf ""$RE"Авторизация не удалась! Введите значения заново.$EN\n"; sleep 1; input_code
 else
 printf "$date \nadb pair to \"$IP\": $PAIR\n\n" >> "$(dirname $0)"/session.log
 printf ""$GR"Авторизация выполнена успешно!$EN\n"
