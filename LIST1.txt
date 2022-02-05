@@ -1,34 +1,36 @@
-com.google.android.apps.turbo
-com.miui.analytics
-com.android.stk
-com.mi.android.globalminusscreen
-com.google.android.cellbroadcastreceiver
-com.google.android.cellbroadcastservice
-com.xiaomi.joyose
-com.miui.bugreport
-com.google.android.projection.gearhead
-com.xiaomi.mircs
-com.miui.mishare.connectivity
-com.tencent.soter.soterserver
-com.facebook.appmanager
-com.facebook.services
-com.facebook.system
-com.miui.daemon
-com.miui.vsimcore
-com.android.wallpaperbackup
-com.miui.weather2
-com.miui.msa.global
-com.xiaomi.glgm
-com.miui.yellowpage
-com.xiaomi.mipicks
-com.xiaomi.payment
-com.mipay.wallet.in
-com.netflix.partner.activation
-com.google.android.partnersetup
-com.android.providers.partnerbookmarks
-com.miui.miservice
-com.miui.hybrid.accessory
-com.miui.hybrid
-com.mipay.wallet.id
-com.google.android.apps.wellbeing
-com.xiaomi.simactivate.service
+Cписок по умолчанию
+
+com.google.android.apps.turbo # Device Health Services
+com.miui.analytics # Analytics 
+com.android.stk # Меню SIM
+com.mi.android.globalminusscreen # Лента виджетов
+com.google.android.cellbroadcastreceiver # Оповещение населения
+com.google.android.cellbroadcastservice # Обработка аварийных сигналов
+com.xiaomi.joyose # Joyose
+com.miui.bugreport # Отчеты об ошибках
+com.google.android.projection.gearhead # Android Auto
+com.xiaomi.mircs # MIUI to MIUI Message
+com.miui.mishare.connectivity # Mi Share
+com.tencent.soter.soterserver # Chinese Payment service
+com.facebook.appmanager # Facebook
+com.facebook.services # Facebook
+com.facebook.system # Facebook
+com.miui.daemon # MiuiDaemon
+com.miui.vsimcore # Ми Роуминг
+com.android.wallpaperbackup # WallpaperBackup
+com.miui.weather2 # Погода
+com.miui.msa.global # MSA
+com.xiaomi.glgm # Игры
+com.miui.yellowpage # Yellow Page
+com.xiaomi.mipicks # GetApps
+com.xiaomi.payment # Mi Pay
+com.mipay.wallet.in # Mi Wallet (India)
+com.mipay.wallet.id # Mi Wallet (Indonesia)
+com.netflix.partner.activation # Netflix
+com.google.android.partnersetup # Google Partner Setup
+com.android.providers.partnerbookmarks # Bookmark Provider
+com.miui.miservice # Сервисы и обратная связь Xiaomi
+com.miui.hybrid.accessory # HybridAccessory
+com.miui.hybrid # Quick Apps
+com.google.android.apps.wellbeing # Цифровое благополучие
+com.xiaomi.simactivate.service # Сервис активации Xiaomi SIM

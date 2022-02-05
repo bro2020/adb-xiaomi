@@ -8,7 +8,7 @@ export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-linux/":"$PATH"
 fi
 
-DEV=$(adb devices -l | tail +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
@@ -84,8 +84,7 @@ worker$FUNC
 }
 
 list_a_u_s(){
-count=$(adb shell pm list packages -$KEY | grep $F | wc -l)
-res_count=$(expr $count - 2)
+res_count=$(adb shell pm list packages -$KEY | grep $F | wc -l)
 printf ""$YE"*******************************************************$EN
 "$YE"************$EN  $(printf '%16s %2s\n' "$KEY_NAME") приложения  "$YE"************$EN
 "$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
@@ -102,10 +101,9 @@ ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
 COMM=$(comm -23 <(ALL_REM) <(ALL))
-count=$(echo "$COMM" | wc -l)
-res_count=$(expr $count - 2)
+res_count=$(echo "$COMM" | wc -l)
 printf ""$YE"*******************************************************$EN
-"$YE"**$EN \t Удаленные приложения \t "$YE"****************$EN
+"$YE"****************$EN  Удаленные приложения  "$YE"***************$EN
 "$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
 "$YE"*******************************************************$EN
 "$YE"Всего приложений:$EN $res_count
@@ -126,7 +124,7 @@ ECHO_LST=$(cat "$(dirname $0)"/LIST"$n_lst".txt | grep $F)
 count=$(echo "$ECHO_LST" | wc -l)
 res_count=$(expr $count - 2)
 printf ""$YE"*******************************************************$EN
-"$YE"************$EN  Список приложений LIST"$n_lst".txt "$YE"*************$EN
+"$YE"**************$EN  Список приложений LIST"$n_lst" "$YE"***************$EN
 "$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
 "$YE"*******************************************************$EN
 "$YE"Всего приложений:$EN $res_count
@@ -201,7 +199,7 @@ case "$m_sel" in
   del) del_to_list ;;
   "del -a") del_all_to_list ;;
   a) KEY=a; KEY_NAME='Все'; list_a_u_s ;;
-  u) KEY=u; KEY_NAME='Установленные'; list_a_u_s ;;
+  u) KEY=3; KEY_NAME='Установленные'; list_a_u_s ;;
   s) KEY=s; KEY_NAME='Системные'; list_a_u_s ;;
   d) list_removed ;;
   f) set_filter ;;
@@ -214,12 +212,12 @@ esac
 primary_selecting() {
 printf ""$YE"###################################################################################$EN
 "$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-"$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во ВКЛЮЧЕННОЕ положение$EN
+"$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть ВКЛЮЧЕН!$EN
 
   "$WH"Введите $EN"$GR"r$EN "$WH"- для удаления приложений
   Введите $EN"$GR"i$EN "$WH"- для восстанолвения приложений
 
-Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
+Или введите $EN"$GR"q$EN "$WH"для завершение работы скрипта$EN
 "$YE"_______________________$EN\n"
 read -p 'Сделайте выбор здесь: ' p_sel
 case $p_sel in
@@ -257,11 +255,13 @@ fi
 
 lst(){
 ECHO_LST=$(cat "$(dirname $0)"/LIST"$a2".txt | grep $F)
+count=$(echo "$ECHO_LST" | wc -l)
+res_count=$(expr $count - 2)
 printf ""$YE"*******************************************************$EN
-"$YE"************$EN  Список приложений LIST"$a2".txt "$YE"*************$EN
+"$YE"**************$EN  Список приложений LIST"$a2" "$YE"***************$EN
 "$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
 "$YE"*******************************************************$EN
-"$YE"Всего:$EN $(echo "$ECHO_LST" | wc -l)
+"$YE"Всего приложений:$EN $res_count
 $(echo "$ECHO_LST")
 "$YE"*******************************************************$EN\n" | less -R
 exit 0
@@ -300,7 +300,7 @@ printf ""$WH"Версия скрипта $VERSION
   (без$EN "$GR".apk$EN "$WH"вконце). Все как в случае с восстановлением.$EN
 
   "$RE"Для УСТАНОВКИ и ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-  "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть установлен во$EN "$YE"ВКЛЮЧЕННОЕ$EN "$RE"положение.$EN\n\n"; exit 0
+  "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть$EN "$YE"ВКЛЮЧЕН!$EN\n\n"; exit 0
 }
 
 a2=$2
@@ -311,7 +311,7 @@ case "$1" in
   -i) COMMAND='install'; FUNC='_restore'; STATUS='exit 0'; cli_w ;;
   ls) lst ;;
   -a) STATUS='exit 0'; KEY=a; KEY_NAME='Все'; list_a_u_s ;;
-  -u) STATUS='exit 0'; KEY=u; KEY_NAME='Установленные'; list_a_u_s ;;
+  -u) STATUS='exit 0'; KEY=3; KEY_NAME='Установленные'; list_a_u_s ;;
   -s) STATUS='exit 0'; KEY=s; KEY_NAME='Системные'; list_a_u_s ;;
   -d) STATUS='exit 0'; list_removed ;;
   -h|--help) helpa ;;
@@ -319,11 +319,9 @@ case "$1" in
 esac
 
 if [[ $DEV = '' ]]; then
-printf ""$WH"Версия скрипта $VERSION"$EN"
-"$RE"Телефон не обнаружен!$EN\n"
+printf ""$RE"Телефон не обнаружен!$EN\n"
 conn
 else
-printf ""$WH"Версия скрипта $VERSION"$EN"
-"$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN\n"
+printf ""$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi
