@@ -3,9 +3,11 @@
 if [[ $(uname -s) != 'Linux' ]]; then
 export LD_LIBRARY_PATH="$(dirname $0)/adb-macos/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-macos/":"$PATH"
+SED='mac'
 else
 export LD_LIBRARY_PATH="$(dirname $0)/adb-linux/lib64":"$LD_LIBRARY_PATH"
 export PATH="$(dirname $0)/adb-linux/":"$PATH"
+SED=''
 fi
 
 DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
@@ -148,9 +150,15 @@ main_selectind
 }
 
 del_to_list() {
+SED1=''
+SED2='macsed=lox'
 read -p "Введите номер списка: " nom_list
 read -p "Введите имя приложения: " name_app
-sed -i "/^$name_app$/d" "$(dirname $0)"/LIST"$nom_list".txt && \
+if [[ $SED = 'mac' ]];then
+SED1='.back'
+SED2="rm "$(dirname $0)"/LIST"$nom_list".txt.back"
+fi
+sed -i$SED1 "/^$name_app$/d" "$(dirname $0)"/LIST"$nom_list".txt && $SED2 && \
 printf ""$GR"Удаление приложение$EN "$YE""$name_app"$EN "$GR"из списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
 sleep 1
 main_selectind
@@ -158,7 +166,7 @@ main_selectind
 
 del_all_to_list() {
 read -p "Введите номер списка: " nom_list
-echo '' > "$(dirname $0)"/LIST"$nom_list".txt && \
+echo -n > "$(dirname $0)"/LIST"$nom_list".txt && \
 printf ""$GR"Очистка списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
 sleep 1
 main_selectind
@@ -215,7 +223,7 @@ printf ""$YE"###################################################################
 "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть ВКЛЮЧЕН!$EN
 
   "$WH"Введите $EN"$GR"r$EN "$WH"- для удаления приложений
-  Введите $EN"$GR"i$EN "$WH"- для восстанолвения приложений
+  Введите $EN"$GR"i$EN "$WH"- для восстановления приложений
 
 Или введите $EN"$GR"q$EN "$WH"для завершение работы скрипта$EN
 "$YE"_______________________$EN\n"
