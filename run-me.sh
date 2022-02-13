@@ -10,12 +10,12 @@ export PATH="$(dirname $0)/adb-linux/":"$PATH"
 SED=''
 fi
 
-DEV=$(adb devices -l | tail +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
 F='$'
-VERSION='1.1'
+VERSION='1.2'
 date=`date`
 
 FON="2;1"
@@ -27,32 +27,57 @@ WH="\e[$FON;97m" # "97" - если фон терминала тёмный, "90" 
 EN="\e[0m"
 
 worker_rm(){
+clear
 if [[ $APPS_LIST = '' ]]; then
 printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
-$STATUS
-sleep 1
+$ST
+sleep 2
 main_selectind
 fi
+mkdir -p "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"
 printf "$date\nЗапущено удаление приложений:\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
 echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
-adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP/$APPS.apk && \
+adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk && \
 adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
 done &&
 printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
 printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
 printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
-$STATUS
+$ST
 sleep 1
 main_selectind
 }
 
-worker_restore(){
+worker_rmn(){
+clear
 if [[ $APPS_LIST = '' ]]; then
 printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
-$STATUS
-sleep 1
+$ST
+sleep 2
+main_selectind
+fi
+printf "$date\nЗапущено удаление приложений без бекапа:\n" >> "$(dirname $0)"/worker.log
+for APPS in $APPS_LIST
+do
+echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
+adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
+done &&
+printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
+printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
+printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
+$ST
+sleep 2
+main_selectind
+}
+
+worker_restore(){
+clear
+if [[ $APPS_LIST = '' ]]; then
+printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
+$ST
+sleep 2
 main_selectind
 fi
 printf "$date\nЗапущено восстановлеение приложений:\n" >> "$(dirname $0)"/worker.log
@@ -64,28 +89,30 @@ sleep 2
 for APPS in $APPS_LIST
 do
 echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
-adb push "$(dirname $0)"/BACKUP_APP/$APPS.apk /data/local/tmp && \
+adb push "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk /data/local/tmp && \
 adb shell "cd /data/local/tmp/ && \
 chmod +x $APPS.apk && \
 pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log && \
 adb shell rm /data/local/tmp/$APPS.apk && \
-rm "$(dirname $0)"/BACKUP_APP/$APPS.apk
+rm "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk
 done &&
 printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
 printf "Восстановление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
 printf "Восстановление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
-$STATUS
-sleep 1
+$ST
+sleep 2
 main_selectind
 }
 
-input(){
+input_0(){
+clear
 read -p 'Введите название приложения: ' APPS_LIST
 printf ""$YE"_________________________________________________________________________________$EN\n"
 worker$FUNC
 }
 
 list_a_u_s(){
+$S_CLEAR
 res_count=$(adb shell pm list packages -$KEY | grep $F | wc -l)
 printf ""$YE"*******************************************************$EN
 "$YE"************$EN  $(printf '%16s %2s\n' "$KEY_NAME") приложения  "$YE"************$EN
@@ -93,8 +120,8 @@ printf ""$YE"*******************************************************$EN
 "$YE"*******************************************************$EN
 "$YE"Всего приложений:$EN $res_count
 $(adb shell pm list packages -$KEY | grep $F | sort | cut -d: -f2)
-"$YE"*******************************************************$EN\n" | less -R
-$STATUS
+"$YE"*******************************************************$EN\n" | $LESS_ST
+$ST
 main_selectind
 }
 
@@ -102,6 +129,7 @@ ALL_REM() { adb shell pm list packages -u | grep $F | sort | cut -d: -f2; }
 ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
+$S_CLEAR
 COMM=$(comm -23 <(ALL_REM) <(ALL))
 res_count=$(echo "$COMM" | wc -l)
 printf ""$YE"*******************************************************$EN
@@ -110,17 +138,19 @@ printf ""$YE"*******************************************************$EN
 "$YE"*******************************************************$EN
 "$YE"Всего приложений:$EN $res_count
 $(echo "$COMM" )
-"$YE"*******************************************************$EN\n" | less -R
-$STATUS
+"$YE"*******************************************************$EN\n" | $LESS_ST
+$ST
 main_selectind
 }
 
 set_filter() {
+clear
 read -p "Введите слово фильтра: " F
 main_selectind
 }
 
 echo_list() {
+clear
 read -p 'Ввведите номер списка: ' n_lst
 ECHO_LST=$(cat "$(dirname $0)"/LIST"$n_lst".txt | grep $F)
 count=$(echo "$ECHO_LST" | wc -l)
@@ -136,6 +166,7 @@ main_selectind
 }
 
 add_to_list() {
+clear
 read -p "Введите номер списка: " nom_list
 read -p "Введите имя приложения: " name_app
 touch "$(dirname $0)"/LIST"$nom_list".txt
@@ -150,11 +181,12 @@ main_selectind
 }
 
 del_to_list() {
+clear
 SED1=''
 SED2='macsed=lox'
 read -p "Введите номер списка: " nom_list
 read -p "Введите имя приложения: " name_app
-if [[ $SED = 'mac' ]];then
+if [[ $SED = 'mac' ]]; then
 SED1='.back'
 SED2="rm "$(dirname $0)"/LIST"$nom_list".txt.back"
 fi
@@ -165,6 +197,7 @@ main_selectind
 }
 
 del_all_to_list() {
+clear
 read -p "Введите номер списка: " nom_list
 echo -n > "$(dirname $0)"/LIST"$nom_list".txt && \
 printf ""$GR"Очистка списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
@@ -173,6 +206,7 @@ main_selectind
 }
 
 main_selectind() {
+clear
 printf ""$YE"###################################################################################$EN
 "$BL"Выбран режим $EN"$GR"$R$EN
   "$WH"Введите $EN"$GR"0$N "$WH"- для выборочного $R (Можно ввести несколько имён приложений через пробел).
@@ -198,31 +232,34 @@ printf ""$YE"###################################################################
 read -p "Сделайте выбор здесь: " m_sel
 printf ""$YE"_______________________$EN\n"
 if [[ "$(echo $LS_N | tr ' ' '\n' | grep -cx $m_sel)" -ge 1 ]]; then
-APPS_LIST=$(<"$(dirname $0)"/LIST"$m_sel".txt | tail +3 | cut -d' ' -f1); worker$FUNC
+BACK_NUM="$m_sel"
+APPS_LIST=$(cat "$(dirname $0)"/LIST"$m_sel".txt | tail -n +3 | cut -d' ' -f1); worker$FUNC
 fi
 case "$m_sel" in
-  0) input ;;
+  0) BACK_NUM="$m_sel"; input_0 ;;
   ls) echo_list ;;
   add) add_to_list ;;
   del) del_to_list ;;
   "del -a") del_all_to_list ;;
-  a) KEY=a; KEY_NAME='Все'; list_a_u_s ;;
-  u) KEY=3; KEY_NAME='Установленные'; list_a_u_s ;;
-  s) KEY=s; KEY_NAME='Системные'; list_a_u_s ;;
-  d) list_removed ;;
+  a) LESS_ST='less -R'; KEY=a; KEY_NAME='Все'; S_CLEAR='clear'; list_a_u_s ;;
+  u) LESS_ST='less -R'; KEY=3; KEY_NAME='Установленные'; S_CLEAR='clear'; list_a_u_s ;;
+  s) LESS_ST='less -R'; KEY=s; KEY_NAME='Системные'; S_CLEAR='clear'; list_a_u_s ;;
+  d) LESS_ST='less -R'; list_removed; S_CLEAR='clear'; ;;
   f) set_filter ;;
   b) primary_selecting ;;
-  q) exit 0 ;;
-  *) printf ""$RE"Неверный ввод!$EN\n"; sleep 1; main_selectind ;;
+  q) clear; exit 0 ;;
+  *) printf ""$RE"Введён недопустимый символ!$EN\n"; sleep 2; main_selectind ;;
 esac
 }
 
 primary_selecting() {
+clear
 printf ""$YE"###################################################################################$EN
 "$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-"$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть ВКЛЮЧЕН!$EN
+"$RE"переключатель$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть ВКЛЮЧЕН!$EN
 
   "$WH"Введите $EN"$GR"r$EN "$WH"- для удаления приложений
+  Введите $EN"$GR"rn$EN "$WH"- для удаления приложений без бекапа
   Введите $EN"$GR"i$EN "$WH"- для восстановления приложений
 
 Или введите $EN"$GR"q$EN "$WH"для завершение работы скрипта$EN
@@ -230,21 +267,23 @@ printf ""$YE"###################################################################
 read -p 'Сделайте выбор здесь: ' p_sel
 case $p_sel in
   r) COMMAND='uninstall -k'; R='удаления' FUNC='_rm'; main_selectind ;;
+  rn) COMMAND='uninstall -k'; R='удаления без бекапа' FUNC='_rmn'; main_selectind ;;
   i) COMMAND='install'; R='восстановления' FUNC='_restore'; main_selectind ;;
-  q) exit 0 ;;
-  *) printf ""$RE"Неверный ввод!$EN\n"; sleep 1; primary_selecting ;;
+  q) clear; exit 0 ;;
+  *) printf ""$RE"Неверный ввод!$EN\n"; sleep 2; primary_selecting ;;
 esac
 }
 
 conn() {
+clear
 printf ""$WH"  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона
   Введите $EN"$GR"q$EN "$WH"для завершения этого скрипта$EN
 "$YE"_______________________$EN\n"
 read -p "Сделайте выбор здесь: " con
 case $con in
-  y) RUN_STATUS="source $0" source $CONNECT; primary_selecting ;;
-  q) exit 0 ;;
-  *) printf "$REНеверный ввод!$EN"; sleep 1; conn ;;
+  y) RUN_ST="source $0" source $CONNECT; primary_selecting ;;
+  q) clear; exit 0 ;;
+  *) printf "$REНеверный ввод!$EN"; sleep 2; conn ;;
 esac
 }
 
@@ -271,18 +310,18 @@ printf ""$YE"*******************************************************$EN
 "$YE"*******************************************************$EN
 "$YE"Всего приложений:$EN $res_count
 $(echo "$ECHO_LST")
-"$YE"*******************************************************$EN\n" | less -R
+"$YE"*******************************************************$EN\n"
 exit 0
 }
 
 helpa() {
 printf ""$WH"Версия скрипта $VERSION
 
-  Ключ $EN"$YE"ls$EN - "$WH"используя параметры, выводит содержимое списков приложений.
+  Ключ $EN"$YE"ls$EN - "$WH"используя аргументы, выводит содержимое списков приложений.
        "$BL"Пример:$EN
           "$RE"./run-me.sh $EN"$YE"ls $EN"$GR"1$EN "$WH"- отобразит содержимое списка$EN "$GR"LIST1$EN
 
-  "$WH"В данный момент обнаружены списки:$EN "$GR"$LS$EN
+       "$YE"В данный момент обнаружены списки:$EN "$GR"$LS$EN
 
   "$WH"Ключ $EN"$GR"-a$N "$WH"- отображает все приложеня.
   Ключ $EN"$GR"-u$N "$WH"- отображает установленные приложения.
@@ -292,40 +331,43 @@ printf ""$WH"Версия скрипта $VERSION
           "$RE"./run-me.sh $EN"$GR"-u$EN "$WH"- отображает список всех установленых пользователем приложений
 
   Ключ $EN"$YE"-r$EN - "$WH"задает режим УДАЛЕНИЯ приложений.
+  Ключ $EN"$YE"-rn$EN - "$WH"задает режим УДАЛЕНИЯ приложений БЕЗ БЕКАПА.
   Ключ $EN"$YE"-i$EN - "$WH"задает режим ВОССТАНОВЛЕНИЯ приложений.
 
-  С параметрами $EN"$GR"1-n$EN - "$WH"задается список имён приложений.$EN
+    С параметрами $EN"$GR"1-n$EN - "$WH"задается список имён приложений.$EN
        "$BL"Пример:$EN
           "$RE"./run-me.sh $EN"$YE"-r $EN"$GR"2$EN "$WH"- запускает удаление приложений из списка$EN "$GR"LIST2$EN "$WH"
 
-  "$WH"С параметром$EN "$GR"0$EN "$WH"имена приложений задаются вручную в кавычках через пробел.$EN
+    "$WH"С параметром$EN "$GR"0$EN "$WH"имена приложений задаются вручную в кавычках через пробел.$EN
        "$BL"Пример:$EN
           "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 'com.miui.app1 com.miui.app2'$EN "$WH"- запускает восстановление приложений
        $EN"$GR"com.miui.app1$EN "$WH"и$EN "$GR"com.miui.app2$EN
 
-  "$WH"Для простой УСТАНОВКИ приложений, их$EN "$GR"apk$EN "$WH"файлы нужно разместить в директории$EN "$GR"BACKUP_APP$EN.
-  "$WH"Запустить восстановление с параметром$EN "$GR"0$EN. "$WH"В качестве имён через пробел указать названия файлов
+  "$WH"Для простой УСТАНОВКИ приложений, их$EN "$GR"apk$EN "$WH"файлы нужно разместить в директории$EN "$GR"BACKUP_APP_0$EN.
+  "$WH"Запустить восстановление с параметром$EN "$GR"0$EN. "$WH"В качестве имён указать названия файлов приложений
   (без$EN "$GR".apk$EN "$WH"вконце). Все как в случае с восстановлением.$EN
 
   "$RE"Для УСТАНОВКИ и ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-  "$RE"ползунок$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть$EN "$YE"ВКЛЮЧЕН!$EN\n\n"; exit 0
+  "$RE"переключатель$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть$EN "$YE"ВКЛЮЧЕН!$EN\n\n"; exit 0
 }
 
 a2=$2
 a3=$3
 case "$1" in
-  '') STATUS='' ;;
-  -r) COMMAND='uninstall -k'; FUNC='_rm'; STATUS='exit 0'; cli_w ;;
-  -i) COMMAND='install'; FUNC='_restore'; STATUS='exit 0'; cli_w ;;
+  '') ST='' ;;
+  -r) ST='exit 0'; COMMAND='uninstall -k'; FUNC='_rm';  BACK_NUM="$a2"; cli_w ;;
+  -rn) ST='exit 0'; COMMAND='uninstall -k'; FUNC='_rmn'; cli_w ;;
+  -i) ST='exit 0'; COMMAND='install'; FUNC='_restore'; BACK_NUM="$a2";  cli_w ;;
   ls) lst ;;
-  -a) STATUS='exit 0'; KEY=a; KEY_NAME='Все'; list_a_u_s ;;
-  -u) STATUS='exit 0'; KEY=3; KEY_NAME='Установленные'; list_a_u_s ;;
-  -s) STATUS='exit 0'; KEY=s; KEY_NAME='Системные'; list_a_u_s ;;
-  -d) STATUS='exit 0'; list_removed ;;
+  -a) ST='exit 0'; LESS_ST='tee'; KEY=a; KEY_NAME='Все'; S_CLEAR=''; list_a_u_s ;;
+  -u) ST='exit 0'; LESS_ST='tee';  KEY=3; KEY_NAME='Установленные'; S_CLEAR=''; list_a_u_s ;;
+  -s) ST='exit 0'; LESS_ST='tee';  KEY=s; KEY_NAME='Системные'; S_CLEAR=''; list_a_u_s ;;
+  -d) ST='exit 0'; LESS_ST='tee';  S_CLEAR=''; list_removed ;;
   -h|--help) helpa ;;
   *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
 
+clear
 if [[ $DEV = '' ]]; then
 printf ""$RE"Телефон не обнаружен!$EN\n"
 conn
