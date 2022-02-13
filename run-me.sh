@@ -10,7 +10,7 @@ export PATH="$(dirname $0)/adb-linux/":"$PATH"
 SED=''
 fi
 
-DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail -n +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
@@ -48,7 +48,7 @@ printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
 printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
 printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
 $ST
-sleep 1
+sleep 2
 main_selectind
 }
 
@@ -178,9 +178,9 @@ if [[ $(cat "$(dirname $0)"/LIST"$nom_list".txt) = '' ]]; then
 echo "Список создан скриптом $date
 " >> "$(dirname $0)"/LIST"$nom_list".txt
 fi
-echo "$name_app" >> "$(dirname $0)"/LIST"$nom_list".txt && \
+echo "$name_app" | tr ' ' '\n' | tee >> "$(dirname $0)"/LIST"$nom_list".txt && \
 printf ""$GR"Добавление приложения$EN "$YE""$name_app"$EN "$GR"в список$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
-sleep 1
+sleep 2
 main_selectind
 }
 
@@ -196,7 +196,7 @@ SED2="rm "$(dirname $0)"/LIST"$nom_list".txt.back"
 fi
 sed -i$SED1 "/^$name_app$/d" "$(dirname $0)"/LIST"$nom_list".txt && $SED2 && \
 printf ""$GR"Удаление приложение$EN "$YE""$name_app"$EN "$GR"из списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
-sleep 1
+sleep 2
 main_selectind
 }
 
@@ -205,7 +205,7 @@ clear
 read -p "Введите номер списка: " nom_list
 echo -n > "$(dirname $0)"/LIST"$nom_list".txt && \
 printf ""$GR"Очистка списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
-sleep 1
+sleep 2
 main_selectind
 }
 
