@@ -27,13 +27,15 @@ WH="\e[$FON;97m" # "97" - если фон терминала тёмный, "90" 
 EN="\e[0m"
 
 worker_rm(){
-clear
+$CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
 printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
 $ST
 sleep 2
 main_selectind
 fi
+printf ""$GR"Процесс $R запущен...$EN\n"
+sleep 2
 mkdir -p "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"
 printf "$date\nЗапущено удаление приложений:\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
@@ -51,13 +53,15 @@ main_selectind
 }
 
 worker_rmn(){
-clear
+$CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
 printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
 $ST
 sleep 2
 main_selectind
 fi
+printf ""$GR"Процесс $R запущен...$EN\n"
+sleep 2
 printf "$date\nЗапущено удаление приложений без бекапа:\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
@@ -73,7 +77,7 @@ main_selectind
 }
 
 worker_restore(){
-clear
+$CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
 printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
 $ST
@@ -81,10 +85,10 @@ sleep 2
 main_selectind
 fi
 printf "$date\nЗапущено восстановлеение приложений:\n" >> "$(dirname $0)"/worker.log
-printf ""$RE"!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
-! Внимание! На телефоне потребуется вручную разрешить установку приложений  !
-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
-$BLПоехали...$EN\n"
+printf ""$RE"!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
+!  ВНИМАНИЕ! Сейчас на экране телефона потребуется вручную разрешить установку приложений !
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
+"$GR"Процесс $R запущен...$EN\n"
 sleep 2
 for APPS in $APPS_LIST
 do
@@ -112,7 +116,7 @@ worker$FUNC
 }
 
 list_a_u_s(){
-$S_CLEAR
+$CLEAR_ST
 res_count=$(adb shell pm list packages -$KEY | grep $F | wc -l)
 printf ""$YE"*******************************************************$EN
 "$YE"************$EN  $(printf '%16s %2s\n' "$KEY_NAME") приложения  "$YE"************$EN
@@ -129,7 +133,7 @@ ALL_REM() { adb shell pm list packages -u | grep $F | sort | cut -d: -f2; }
 ALL() { adb shell pm list packages | grep $F | sort | cut -d: -f2; }
 
 list_removed() {
-$S_CLEAR
+$CLEAR_ST
 COMM=$(comm -23 <(ALL_REM) <(ALL))
 res_count=$(echo "$COMM" | wc -l)
 printf ""$YE"*******************************************************$EN
@@ -232,19 +236,18 @@ printf ""$YE"###################################################################
 read -p "Сделайте выбор здесь: " m_sel
 printf ""$YE"_______________________$EN\n"
 if [[ "$(echo $LS_N | tr ' ' '\n' | grep -cx $m_sel)" -ge 1 ]]; then
-BACK_NUM="$m_sel"
-APPS_LIST=$(cat "$(dirname $0)"/LIST"$m_sel".txt | tail -n +3 | cut -d' ' -f1); worker$FUNC
+BACK_NUM="$m_sel" CLEAR_ST='clear' APPS_LIST=$(cat "$(dirname $0)"/LIST"$m_sel".txt | tail -n +3 | cut -d' ' -f1); worker$FUNC
 fi
 case "$m_sel" in
-  0) BACK_NUM="$m_sel"; input_0 ;;
+  0) CLEAR_ST='clear' BACK_NUM="$m_sel"; input_0 ;;
   ls) echo_list ;;
   add) add_to_list ;;
   del) del_to_list ;;
   "del -a") del_all_to_list ;;
-  a) LESS_ST='less -R'; KEY=a; KEY_NAME='Все'; S_CLEAR='clear'; list_a_u_s ;;
-  u) LESS_ST='less -R'; KEY=3; KEY_NAME='Установленные'; S_CLEAR='clear'; list_a_u_s ;;
-  s) LESS_ST='less -R'; KEY=s; KEY_NAME='Системные'; S_CLEAR='clear'; list_a_u_s ;;
-  d) LESS_ST='less -R'; list_removed; S_CLEAR='clear'; ;;
+  a) LESS_ST='less -R' CLEAR_ST='clear' KEY=a KEY_NAME='Все'; list_a_u_s ;;
+  u) LESS_ST='less -R' CLEAR_ST='clear' KEY=3 KEY_NAME='Установленные'; list_a_u_s ;;
+  s) LESS_ST='less -R' CLEAR_ST='clear' KEY=s KEY_NAME='Системные'; list_a_u_s ;;
+  d) LESS_ST='less -R' CLEAR_ST='clear' list_removed ;;
   f) set_filter ;;
   b) primary_selecting ;;
   q) clear; exit 0 ;;
@@ -266,9 +269,9 @@ printf ""$YE"###################################################################
 "$YE"_______________________$EN\n"
 read -p 'Сделайте выбор здесь: ' p_sel
 case $p_sel in
-  r) COMMAND='uninstall -k'; R='удаления' FUNC='_rm'; main_selectind ;;
-  rn) COMMAND='uninstall -k'; R='удаления без бекапа' FUNC='_rmn'; main_selectind ;;
-  i) COMMAND='install'; R='восстановления' FUNC='_restore'; main_selectind ;;
+  r) COMMAND='uninstall -k' R='удаления' FUNC='_rm'; main_selectind ;;
+  rn) COMMAND='uninstall -k' R='удаления без бекапа' FUNC='_rmn'; main_selectind ;;
+  i) COMMAND='install' R='восстановления' FUNC='_restore'; main_selectind ;;
   q) clear; exit 0 ;;
   *) printf ""$RE"Неверный ввод!$EN\n"; sleep 2; primary_selecting ;;
 esac
@@ -355,14 +358,14 @@ a2=$2
 a3=$3
 case "$1" in
   '') ST='' ;;
-  -r) ST='exit 0'; COMMAND='uninstall -k'; FUNC='_rm';  BACK_NUM="$a2"; cli_w ;;
-  -rn) ST='exit 0'; COMMAND='uninstall -k'; FUNC='_rmn'; cli_w ;;
-  -i) ST='exit 0'; COMMAND='install'; FUNC='_restore'; BACK_NUM="$a2";  cli_w ;;
+  -r) ST='exit 0' CLEAR_ST='' COMMAND='uninstall -k' R='удаления' FUNC='_rm'  BACK_NUM="$a2"; cli_w ;;
+  -rn) ST='exit 0' CLEAR_ST='' COMMAND='uninstall -k' R='удаления без бекапа' FUNC='_rmn'; cli_w ;;
+  -i) ST='exit 0' CLEAR_ST='' COMMAND='install' R='восстановления' FUNC='_restore' BACK_NUM="$a2";  cli_w ;;
   ls) lst ;;
-  -a) ST='exit 0'; LESS_ST='tee'; KEY=a; KEY_NAME='Все'; S_CLEAR=''; list_a_u_s ;;
-  -u) ST='exit 0'; LESS_ST='tee';  KEY=3; KEY_NAME='Установленные'; S_CLEAR=''; list_a_u_s ;;
-  -s) ST='exit 0'; LESS_ST='tee';  KEY=s; KEY_NAME='Системные'; S_CLEAR=''; list_a_u_s ;;
-  -d) ST='exit 0'; LESS_ST='tee';  S_CLEAR=''; list_removed ;;
+  -a) ST='exit 0' LESS_ST='tee' CLEAR_ST='' KEY=a KEY_NAME='Все'; list_a_u_s ;;
+  -u) ST='exit 0' LESS_ST='tee' CLEAR_ST='' KEY=3 KEY_NAME='Установленные'; list_a_u_s ;;
+  -s) ST='exit 0' LESS_ST='tee' CLEAR_ST='' KEY=s KEY_NAME='Системные'; list_a_u_s ;;
+  -d) ST='exit 0' LESS_ST='tee' CLEAR_ST=''; list_removed ;;
   -h|--help) helpa ;;
   *) printf ""$RE"Допущена ошибка в написании ключей$EN\n"; exit 1 ;;
 esac
@@ -372,6 +375,6 @@ if [[ $DEV = '' ]]; then
 printf ""$RE"Телефон не обнаружен!$EN\n"
 conn
 else
-printf ""$BL"Обнаружен телефон: $EN"$GR"\"$DEV\"$EN\n"
+printf ""$BL"Обнаружено adb устройство: $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi
