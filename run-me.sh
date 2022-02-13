@@ -10,7 +10,7 @@ export PATH="$(dirname $0)/adb-linux/":"$PATH"
 SED=''
 fi
 
-DEV=$(adb devices -l | tail -n +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
