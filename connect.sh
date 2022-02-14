@@ -167,7 +167,6 @@ fi
 }
 
 worker_connect() {
-clear
 printf ""$YE"###################################################################################$EN
 "$GR"Выполняется подключение...$EN\n"
 CONN=$(adb connect "$IPPORT1" | cut -d' ' -f1)
@@ -191,8 +190,8 @@ printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CO
 printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
 "$YE"###################################################################################$EN\n"
 echo "$IP" > "$(dirname $0)/SESSION.txt"
+sleep 2
 $RUN_ST
-sleep 3
 clear; exit 0
 fi
 }
