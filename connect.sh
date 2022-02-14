@@ -161,7 +161,7 @@ input_code
 else
 printf "$date \nadb pair to \"$IP\": $PAIR\n\n" >> "$(dirname $0)"/session.log
 printf ""$GR"Авторизация выполнена успешно!$EN\n"
-sleep 7
+sleep 1
 worker_connect
 fi
 }
@@ -190,7 +190,7 @@ printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CO
 printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
 "$YE"###################################################################################$EN\n"
 echo "$IP" > "$(dirname $0)/SESSION.txt"
-sleep 2
+sleep 3
 $RUN_ST
 clear; exit 0
 fi
