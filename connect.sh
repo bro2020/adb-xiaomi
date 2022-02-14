@@ -24,7 +24,7 @@ if [[ $DEV != '' ]]; then
 printf "\n"$GR"Подключение к "$YE"\"$DEV\"$EN "$GR"уже установлено!$EN\n\n"
 exit 0
 else
-$STATUS
+$ST
 printf "\n"$WH"Активные подключения не найдены!$EN\n\n"
 exit 0
 fi
@@ -58,12 +58,12 @@ read -p "Сделайте выбор здесь: " session
 case "$session" in
   y) input_port ;;
   q) clear; exit 0 ;;
-  n) STATUS='input_code'; input_ipport1;;
+  n) ST='input_code'; input_ipport1;;
   d) echo '' > "$(dirname $0)/SESSION.txt" && printf "$GRГОТОВО$EN!" && IP=`cat "$(dirname $0)/SESSION.txt"`; check_ip;;
   *) printf ""$RE"Неверный ввод, попробуйте ещё раз.$EN\n"; sleep 2; check_ip ;;
 esac
 fi
-STATUS='input_code'; input_ipport1
+ST='input_code'; input_ipport1
 }
 
 input_port() {
@@ -83,7 +83,7 @@ if [[ $PORT1 = "q" ]]; then
 clear; exit 0
 fi
 IPPORT1="$IP":"$PORT1"
-STATUS2='input_port'
+ST2='input_port'
 worker_connect
 }
 
@@ -109,8 +109,8 @@ read -p "Введите значение из этого поля здесь: " 
 if [[ $IPPORT1 = "q" ]]; then
 clear; exit 0
 fi
-STATUS2='input_ipport1'
-$STATUS
+ST2='input_ipport1'
+$ST
 }
 
 input_code() {
@@ -184,14 +184,14 @@ case "$qin" in
   q) clear; exit 0 ;;
   *) ;;
 esac
-STATUS='worker_connect'
-$STATUS2
+ST='worker_connect'
+$ST2
 else
 printf "$date \nadb connect to \"$IPPORT1\": Successfully \ndevice: \"$DEV\" $CONN\n\n" >> "$(dirname $0)"/session.log
 printf ""$GR"Подключение устройства "$YE"\"$DEV\"$EN "$GR"успешно завершено!$EN
 "$YE"###################################################################################$EN\n"
 echo "$IP" > "$(dirname $0)/SESSION.txt"
-$RUN_STATUS
+$RUN_ST
 sleep 3
 clear; exit 0
 fi
@@ -256,9 +256,9 @@ exit 0
 
 check_pair() {
 if [[ $CODE != '' ]]; then
-STATUS='start_pair_cli'; check_dev
+ST='start_pair_cli'; check_dev
 else
-STATUS='start_connect_cli'; check_dev
+ST='start_connect_cli'; check_dev
 fi
 }
 
@@ -266,9 +266,9 @@ IPPORT1=$2
 CODE=$3
 PORT2=$4
 case "$1" in
-  '') STATUS='check_ip'; check_dev ;;
+  '') ST='check_ip'; check_dev ;;
   -c|--cli) check_pair ;;
-  -l|--list) STATUS=''; check_dev ;;
+  -l|--list) ST=''; check_dev ;;
   -s|--session) session_list ;;
   -d|--disconnect) adb disconnect ;;
   -h|--help) helpa ;;
