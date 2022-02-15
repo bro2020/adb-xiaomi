@@ -1,4 +1,4 @@
 session.log
 worker.log
 SESSION
-/BACKUP_APP
+/BACKUP_APP_*
