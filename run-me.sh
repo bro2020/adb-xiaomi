@@ -10,6 +10,7 @@ export PATH="$(dirname $0)/adb-linux/":"$PATH"
 SED=''
 fi
 
+source "$(dirname $0)/l10n"
 DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
@@ -371,9 +372,9 @@ esac
 
 clear
 if [[ $DEV = '' ]]; then
-printf ""$RE"Телефон не обнаружен!$EN\n"
+printf ""$RE"$uk1$EN\n"
 conn
 else
-printf ""$BL"Обнаружено adb устройство: $EN"$GR"\"$DEV\"$EN\n"
+printf ""$BL"$uk2 $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi
