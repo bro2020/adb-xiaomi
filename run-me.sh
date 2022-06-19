@@ -11,7 +11,7 @@ SED=''
 fi
 
 source "$(dirname $0)/l10n"
-DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+DEV=$(adb devices -l | tail -n +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
@@ -234,7 +234,7 @@ printf ""$YE"###################################################################
 "$WH"Введите $EN"$GR"b$EN "$WH"для повторного выбора режима работы скрипта.
 Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
 "$YE"_______________________$EN\n"
-read -p "Сделайте выбор здесь: " m_sel
+read -p "$uk6" m_sel
 printf ""$YE"_______________________$EN\n"
 if [[ "$(echo $LS_N | tr ' ' '\n' | grep -cx $m_sel)" -ge 1 ]]; then
 BACK_NUM="$m_sel" CLEAR_ST='clear' APPS_LIST=$(cat "$(dirname $0)"/LIST"$m_sel".txt | tail -n +3 | cut -d' ' -f1); worker$FUNC
@@ -252,41 +252,43 @@ case "$m_sel" in
   f) set_filter ;;
   b) primary_selecting ;;
   q) clear; exit 0 ;;
-  *) printf ""$RE"Введён недопустимый символ!$EN\n"; sleep 2; main_selectind ;;
+  *) printf ""$RE"$uk7$EN\n"; sleep 2; main_selectind ;;
 esac
 }
 
 primary_selecting() {
 clear
 printf ""$YE"###################################################################################$EN
-"$RE"Для ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-"$RE"переключатель$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть ВКЛЮЧЕН!$EN
+"$RE"$uk8$EN "$YE"\"$uk9\"$EN
+"$RE"$uk10$EN "$YE"\"$uk11\"$EN "$RE"$uk12$EN
 
-  "$WH"Введите $EN"$GR"r$EN "$WH"- для удаления приложений.
-  Введите $EN"$GR"rn$EN "$WH"- для удаления приложений без бекапа.
-  Введите $EN"$GR"i$EN "$WH"- для восстановления приложений.
+  "$WH"$uk3 $EN"$GR"r$EN "$WH"- $uk13
+  $uk3 $EN"$GR"rn$EN "$WH"- $uk14
+  $uk3 $EN"$GR"i$EN "$WH"- $uk15
 
-Или введите $EN"$GR"q$EN "$WH"для завершение работы скрипта.$EN
+$uk16 $EN"$GR"q$EN "$WH"$uk5$EN
 "$YE"_______________________$EN\n"
-read -p 'Сделайте выбор здесь: ' p_sel
+read -p "$uk6" p_sel
 case $p_sel in
-  r) COMMAND='uninstall -k' R='удаления' FUNC='_rm'; main_selectind ;;
-  rn) COMMAND='uninstall -k' R='удаления без бекапа' FUNC='_rmn'; main_selectind ;;
-  i) COMMAND='install' R='восстановления' FUNC='_restore'; main_selectind ;;
+  r) COMMAND='uninstall -k' R="$uk17" FUNC='_rm'; main_selectind ;;
+  rn) COMMAND='uninstall -k' R="$uk18" FUNC='_rmn'; main_selectind ;;
+  i) COMMAND='install' R="$uk19" FUNC='_restore'; main_selectind ;;
   q) clear; exit 0 ;;
-  *) printf ""$RE"Неверный ввод!$EN\n"; sleep 2; primary_selecting ;;
+  *) printf ""$RE"$uk7$EN\n"; sleep 2; primary_selecting ;;
 esac
 }
 
 conn() {
-printf ""$WH"  Введите $EN"$GR"y$EN "$WH"для запуска скрипта подключения телефона.
-  Введите $EN"$GR"q$EN "$WH"для завершения работы этого скрипта.$EN
+clear
+printf ""$RE"$uk1$EN\n
+"$WH"  $uk3 $EN"$GR"y$EN "$WH"$uk4
+  $uk3 $EN"$GR"q$EN "$WH"$uk5$EN
 "$YE"_______________________$EN\n"
-read -p "Сделайте выбор здесь: " con
+read -p "$uk6" con
 case $con in
   y) RUN_ST="source $0" source $CONNECT; primary_selecting ;;
   q) clear; exit 0 ;;
-  *) printf "$REНеверный ввод!$EN"; sleep 2; conn ;;
+  *) printf ""$RE"$uk7$EN"; sleep 2; conn ;;
 esac
 }
 
@@ -372,7 +374,6 @@ esac
 
 clear
 if [[ $DEV = '' ]]; then
-printf ""$RE"$uk1$EN\n"
 conn
 else
 printf ""$BL"$uk2 $EN"$GR"\"$DEV\"$EN\n"
