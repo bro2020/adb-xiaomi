@@ -1,13 +1,13 @@
-Cписок по умолчанию
+Cписок за замовчанням
 
 com.google.android.apps.turbo # Device Health Services
 com.miui.analytics # Analytics 
 com.android.stk # Меню SIM
-com.mi.android.globalminusscreen # Лента виджетов
-com.google.android.cellbroadcastreceiver # Оповещение населения
-com.google.android.cellbroadcastservice # Обработка аварийных сигналов
+com.mi.android.globalminusscreen # Лента віджетів
+com.google.android.cellbroadcastreceiver # Оповіщення населення
+com.google.android.cellbroadcastservice # Обробка аварійних сигналів
 com.xiaomi.joyose # Joyose
-com.miui.bugreport # Отчеты об ошибках
+com.miui.bugreport # Звіти помилок
 com.google.android.projection.gearhead # Android Auto
 com.xiaomi.mircs # MIUI to MIUI Message
 com.miui.mishare.connectivity # Mi Share
@@ -16,11 +16,11 @@ com.facebook.appmanager # Facebook
 com.facebook.services # Facebook
 com.facebook.system # Facebook
 com.miui.daemon # MiuiDaemon
-com.miui.vsimcore # Ми Роуминг
+com.miui.vsimcore # Мі Роумінг
 com.android.wallpaperbackup # WallpaperBackup
 com.miui.weather2 # Погода
 com.miui.msa.global # MSA
-com.xiaomi.glgm # Игры
+com.xiaomi.glgm # Ігри
 com.miui.yellowpage # Yellow Page
 com.xiaomi.mipicks # GetApps
 com.xiaomi.payment # Mi Pay
@@ -29,8 +29,8 @@ com.mipay.wallet.id # Mi Wallet (Indonesia)
 com.netflix.partner.activation # Netflix
 com.google.android.partnersetup # Google Partner Setup
 com.android.providers.partnerbookmarks # Bookmark Provider
-com.miui.miservice # Сервисы и обратная связь Xiaomi
+com.miui.miservice # Сервіси та зворотній зв'язок Xiaomi
 com.miui.hybrid.accessory # HybridAccessory
 com.miui.hybrid # Quick Apps
-com.google.android.apps.wellbeing # Цифровое благополучие
-com.xiaomi.simactivate.service # Сервис активации Xiaomi SIM
+com.google.android.apps.wellbeing # Цифровий добробут
+com.xiaomi.simactivate.service # Сервіс активації Xiaomi SIM

@@ -11,7 +11,8 @@ SED=''
 fi
 
 source "$(dirname $0)/l10n"
-DEV=$(adb devices -l | tail -n +1 | cut -d: -f4 | cut -d' ' -f1) #для работы дожно быть +2, для отладки +1
+local=uk
+DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работи повинно бути +2, для налагодження +1 $uk96
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
@@ -24,30 +25,30 @@ RE="\e[1;91m"
 GR="\e[$FON;92m"
 YE="\e[$FON;93m"
 BL="\e[$FON;94m"
-WH="\e[$FON;97m" # "97" - если фон терминала тёмный, "90" - если фон тереминала светлый
+WH="\e[$FON;97m" # "97" - якщо фон терминала тёмный, "90" - если фон тереминала светлый $uk97
 EN="\e[0m"
 
 worker_rm(){
 $CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
-printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
+printf ""$RE"$uk59\n$uk60"$EN"\n"
 $ST
 sleep 2
 main_selectind
 fi
-printf ""$GR"Процесс $R запущен...$EN\n"
+printf ""$GR"$uk63 $R $uk64"$EN"\n"
 sleep 2
 mkdir -p "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"
-printf "$date\nЗапущено удаление приложений:\n" >> "$(dirname $0)"/worker.log
+printf "$date\n$uk73\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
-echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
+echo "$APPS: $uk65" >> "$(dirname $0)"/worker.log
 adb pull $(adb shell pm path $APPS | cut -d: -f2) "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk && \
-adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
+adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: $uk66" >> "$(dirname $0)"/worker.log
 done &&
-printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
-printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
-printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
+printf ""$GR"$uk63 $R $uk67"$EN"\n" && \
+printf "$uk71\n\n" >> "$(dirname $0)"/worker.log || \
+printf "$uk72\n\n" >> "$(dirname $0)"/worker.log
 $ST
 sleep 2
 main_selectind
@@ -56,22 +57,22 @@ main_selectind
 worker_rmn(){
 $CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
-printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
+printf ""$RE"$uk59\n$uk60$EN\n"
 $ST
 sleep 2
 main_selectind
 fi
-printf ""$GR"Процесс $R запущен...$EN\n"
+printf ""$GR"$uk63 $R $uk64"$EN"\n"
 sleep 2
-printf "$date\nЗапущено удаление приложений без бекапа:\n" >> "$(dirname $0)"/worker.log
+printf "$date\n$uk70\n" >> "$(dirname $0)"/worker.log
 for APPS in $APPS_LIST
 do
-echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
-adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log
+echo "$APPS: $uk65" >> "$(dirname $0)"/worker.log
+adb shell pm $COMMAND --user 0 $APPS && echo "$APPS: $uk66" >> "$(dirname $0)"/worker.log
 done &&
-printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
-printf "Удаление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
-printf "Удаление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
+printf ""$GR"$uk63 $R $uk67"$EN"\n" && \
+printf "$uk71\n\n" >> "$(dirname $0)"/worker.log || \
+printf "$uk72\n\n" >> "$(dirname $0)"/worker.log
 $ST
 sleep 2
 main_selectind
@@ -80,30 +81,30 @@ main_selectind
 worker_restore(){
 $CLEAR_ST
 if [[ $APPS_LIST = '' ]]; then
-printf ""$RE"Список приложений пуст!\nПроцесс не выполнен!$EN\n"
+printf ""$RE"$uk59\n$uk60"$EN"\n"
 $ST
 sleep 2
 main_selectind
 fi
-printf "$date\nЗапущено восстановлеение приложений:\n" >> "$(dirname $0)"/worker.log
+printf "$date\n$uk61\n" >> "$(dirname $0)"/worker.log
 printf ""$RE"!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!
-!  ВНИМАНИЕ! Сейчас на экране телефона потребуется вручную разрешить установку приложений !
+!  $uk62 !
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!$EN
-"$GR"Процесс $R запущен...$EN\n"
+"$GR"$uk63 $R $uk64"$EN"\n"
 sleep 2
 for APPS in $APPS_LIST
 do
-echo "$APPS: Старт..." >> "$(dirname $0)"/worker.log
+echo "$APPS: $uk65" >> "$(dirname $0)"/worker.log
 adb push "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk /data/local/tmp && \
 adb shell "cd /data/local/tmp/ && \
 chmod +x $APPS.apk && \
-pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS: Успех" >> "$(dirname $0)"/worker.log && \
+pm $COMMAND --user 0 $APPS.apk && exit 0 || rm $APPS.apk; exit 1" && echo "$APPS: $uk66" >> "$(dirname $0)"/worker.log && \
 adb shell rm /data/local/tmp/$APPS.apk && \
 rm "$(dirname $0)"/BACKUP_APP_"$BACK_NUM"/$APPS.apk
 done &&
-printf ""$GR"Процесс $R успешно завершен!$EN\n" && \
-printf "Восстановление завершено!\n\n" >> "$(dirname $0)"/worker.log || \
-printf "Восстановление завершено с ошибками!\n\n" >> "$(dirname $0)"/worker.log
+printf ""$GR"$uk63 $R $uk67"$EN"\n" && \
+printf "$uk68\n\n" >> "$(dirname $0)"/worker.log || \
+printf "$uk69\n\n" >> "$(dirname $0)"/worker.log
 $ST
 sleep 2
 main_selectind
@@ -111,7 +112,7 @@ main_selectind
 
 input_0(){
 clear
-read -p 'Введите название приложения: ' APPS_LIST
+read -p "$uk50 " APPS_LIST
 printf ""$YE"_________________________________________________________________________________$EN\n"
 worker$FUNC
 }
@@ -120,10 +121,10 @@ list_a_u_s(){
 $CLEAR_ST
 res_count=$(adb shell pm list packages -$KEY | grep $F | wc -l)
 printf ""$YE"*******************************************************$EN
-"$YE"************$EN  $(printf '%16s %2s\n' "$KEY_NAME") приложения  "$YE"************$EN
-"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"************$EN  $(printf '%16s %2s\n' "$KEY_NAME") $uk58  "$YE"************$EN
+"$YE"**$EN $uk40 "$GR"$uk41"$EN" - $uk42, "$GR"q$EN - $uk43 "$YE"**$EN
 "$YE"*******************************************************$EN
-"$YE"Всего приложений:$EN $res_count
+"$YE"$uk44"$EN" $res_count
 $(adb shell pm list packages -$KEY | grep $F | sort | cut -d: -f2)
 "$YE"*******************************************************$EN\n" | $LESS_ST
 $ST
@@ -138,10 +139,10 @@ $CLEAR_ST
 COMM=$(comm -23 <(ALL_REM) <(ALL))
 res_count=$(echo "$COMM" | wc -l)
 printf ""$YE"*******************************************************$EN
-"$YE"****************$EN  Удаленные приложения  "$YE"***************$EN
-"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"****************$EN  $uk57  "$YE"***************$EN
+"$YE"**$EN $uk40 "$GR"$uk41"$EN" - $uk42, "$GR"q$EN - $uk43 "$YE"**$EN
 "$YE"*******************************************************$EN
-"$YE"Всего приложений:$EN $res_count
+"$YE"$uk44"$EN" $res_count
 $(echo "$COMM" )
 "$YE"*******************************************************$EN\n" | $LESS_ST
 $ST
@@ -150,21 +151,21 @@ main_selectind
 
 set_filter() {
 clear
-read -p "Введите слово фильтра: " F
+read -p "$uk56 " F
 main_selectind
 }
 
 echo_list() {
 clear
-read -p 'Ввведите номер списка: ' n_lst
+read -p "$uk48 " n_lst
 ECHO_LST=$(cat "$(dirname $0)"/LIST"$n_lst".txt | grep $F)
 count=$(echo "$ECHO_LST" | wc -l)
 res_count=$(expr $count - 2)
 printf ""$YE"*******************************************************$EN
-"$YE"**************$EN  Список приложений LIST"$n_lst" "$YE"***************$EN
-"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"**************$EN  $uk39 LIST"$n_lst" "$YE"***************$EN
+"$YE"**$EN $uk40 "$GR"$uk41"$EN" - $uk42, "$GR"q$EN - $uk43 "$YE"**$EN
 "$YE"*******************************************************$EN
-"$YE"Всего приложений:$EN $res_count
+"$YE"$uk44"$EN" $res_count
 $(echo "$ECHO_LST")
 "$YE"*******************************************************$EN\n" | less -R
 main_selectind
@@ -172,15 +173,15 @@ main_selectind
 
 add_to_list() {
 clear
-read -p "Введите номер списка: " nom_list
-read -p "Введите имя приложения: " name_app
+read -p "$uk48 " nom_list
+read -p "$uk50 " name_app
 touch "$(dirname $0)"/LIST"$nom_list".txt
 if [[ $(cat "$(dirname $0)"/LIST"$nom_list".txt) = '' ]]; then
-echo "Список создан скриптом $date
+echo "$uk53, $date
 " >> "$(dirname $0)"/LIST"$nom_list".txt
 fi
 echo "$name_app" | tr ' ' '\n' | tee >> "$(dirname $0)"/LIST"$nom_list".txt && \
-printf ""$GR"Добавление приложения$EN "$YE""$name_app"$EN "$GR"в список$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
+printf ""$GR"$uk54"$EN" "$YE""$name_app"$EN "$GR"$uk55"$EN" "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
 sleep 2
 main_selectind
 }
@@ -189,23 +190,23 @@ del_to_list() {
 clear
 SED1=''
 SED2='macsed=lox'
-read -p "Введите номер списка: " nom_list
-read -p "Введите имя приложения: " name_app
+read -p "$uk48 " nom_list
+read -p "$uk50 " name_app
 if [[ $SED = 'mac' ]]; then
 SED1='.back'
 SED2="rm "$(dirname $0)"/LIST"$nom_list".txt.back"
 fi
 sed -i$SED1 "/^$name_app$/d" "$(dirname $0)"/LIST"$nom_list".txt && $SED2 && \
-printf ""$GR"Удаление приложение$EN "$YE""$name_app"$EN "$GR"из списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
+printf ""$GR"$uk51"$EN" "$YE""$name_app"$EN "$GR"$uk52"$EN" "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
 sleep 2
 main_selectind
 }
 
 del_all_to_list() {
 clear
-read -p "Введите номер списка: " nom_list
+read -p "$uk48 " nom_list
 echo -n > "$(dirname $0)"/LIST"$nom_list".txt && \
-printf ""$GR"Очистка списка$EN "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
+printf ""$GR"$uk49"$EN" "$YE"LIST"$nom_list"$EN"$GR" ...$EN\n"
 sleep 2
 main_selectind
 }
@@ -213,26 +214,25 @@ main_selectind
 main_selectind() {
 clear
 printf ""$YE"###################################################################################$EN
-"$BL"Выбран режим $EN"$GR"$R$EN
-  "$WH"Введите $EN"$GR"0$N "$WH"- для выборочного $R (Можно ввести несколько имён приложений через пробел).
-  Введите $EN"$GR"1...n$EN "$WH"- для $R по списку приложений $EN"$GR"LIST1...n$EN"$WH".
-  Обнаруженные списки приложений:$EN "$YE"$LS\n$EN
-"$BL"Дополнительные опции:$EN
-  "$WH"Введите $EN"$GR"ls$N "$WH"- для выбора списка приложений и отображения его содержимого.
-  Введите $EN"$GR"add$N "$WH"- для добавления нового имени приложения в список.
-  Введите $EN"$GR"del$N "$WH"- для удаления имени приложения из списка.
-  Введите $EN"$GR"del -a$N "$WH"- для полной очистки списка.
-  Введите $EN"$GR"a$N "$WH"- для отображения всех приложений.
-  Введите $EN"$GR"u$N "$WH"- для отображения установленных приложений.
-  Введите $EN"$GR"s$N "$WH"- для отображения системных приложений.
-  Введите $EN"$GR"d$N "$WH"- для отображения удалённых приложений.
-  Введите $EN"$GR"f$N "$WH"- для установки фильтра по слову.
-Вышеописанные отображения будут отфильтрованы по этому слову
-Для сброса фильтра нужно установить ему значение$EN "$GR"$"$EN"
-"$BL"Установлен фильтр по слову: $EN"$RE"$F$EN
+"$BL"$uk20 $EN"$GR"$R$EN
+  "$WH"$uk3 $EN"$GR"0$N "$WH"- $uk21 $R $uk22
+  $uk3 $EN"$GR"1...n$EN "$WH"- $uk23 $R $uk24 $EN"$YE"LIST$EN"$GR"1...n$EN"$WH".
+  $uk25 $EN "$YE"$LS\n$EN
+"$BL"$uk26 $EN
+  "$WH"$uk3 $EN"$GR"ls$N "$WH"- $uk27
+  $uk3 $EN"$GR"add$N "$WH"- $uk28
+  $uk3 $EN"$GR"del$N "$WH"- $uk29
+  $uk3 $EN"$GR"del -a$N "$WH"- $uk30
+  $uk3 $EN"$GR"a$N "$WH"- $uk31
+  $uk3 $EN"$GR"u$N "$WH"- $uk32
+  $uk3 $EN"$GR"s$N "$WH"- $uk33
+  $uk3 $EN"$GR"d$N "$WH"- $uk34
+  $uk3 $EN"$GR"f$N "$WH"- $uk35
+\n$uk36 $EN "$GR"$"$EN"
+"$BL"$uk37 $EN"$RE"$F$EN
 
-"$WH"Введите $EN"$GR"b$EN "$WH"для повторного выбора режима работы скрипта.
-Введите $EN"$GR"q$EN "$WH"для завершение работы скрипта на этом этапе.$EN
+"$WH"$uk3 $EN"$GR"b$EN "$WH"$uk38
+$uk3 $EN"$GR"q$EN "$WH"$uk5 $EN
 "$YE"_______________________$EN\n"
 read -p "$uk6" m_sel
 printf ""$YE"_______________________$EN\n"
@@ -245,9 +245,9 @@ case "$m_sel" in
   add) add_to_list ;;
   del) del_to_list ;;
   "del -a") del_all_to_list ;;
-  a) LESS_ST='less -R' CLEAR_ST='clear' KEY=a KEY_NAME='Все'; list_a_u_s ;;
-  u) LESS_ST='less -R' CLEAR_ST='clear' KEY=3 KEY_NAME='Установленные'; list_a_u_s ;;
-  s) LESS_ST='less -R' CLEAR_ST='clear' KEY=s KEY_NAME='Системные'; list_a_u_s ;;
+  a) LESS_ST='less -R' CLEAR_ST='clear' KEY=a KEY_NAME="$uk45"; list_a_u_s ;;
+  u) LESS_ST='less -R' CLEAR_ST='clear' KEY=3 KEY_NAME="$uk46"; list_a_u_s ;;
+  s) LESS_ST='less -R' CLEAR_ST='clear' KEY=s KEY_NAME="$uk47"; list_a_u_s ;;
   d) LESS_ST='less -R' CLEAR_ST='clear' list_removed ;;
   f) set_filter ;;
   b) primary_selecting ;;
@@ -258,7 +258,8 @@ esac
 
 primary_selecting() {
 clear
-printf ""$YE"###################################################################################$EN
+printf ""$BL"$uk2 $EN"$GR"\"$DEV\"$EN\n
+"$YE"###################################################################################$EN
 "$RE"$uk8$EN "$YE"\"$uk9\"$EN
 "$RE"$uk10$EN "$YE"\"$uk11\"$EN "$RE"$uk12$EN
 
@@ -299,8 +300,8 @@ fi
 if [[ "$(echo $LS_N | tr ' ' '\n' | grep -cx $a2)" -ge 1 ]]; then
 APPS_LIST=$(cat "$(dirname $0)"/LIST"$a2".txt | tail +3 | cut -d' ' -f1); worker$FUNC
 else
-printf "\n"$RE"Допущена ошибка в написании ключей!$EN
-"$WH"Обнаруженные списки приложений:$EN "$YE"$LS\n$EN\n"
+printf "\n"$RE"$uk7 $EN
+"$WH"$uk25 $EN"$YE"$LS\n$EN\n"
 exit 1
 fi
 }
@@ -310,50 +311,49 @@ ECHO_LST=$(cat "$(dirname $0)"/LIST"$a2".txt | grep $F)
 count=$(echo "$ECHO_LST" | wc -l)
 res_count=$(expr $count - 2)
 printf ""$YE"*******************************************************$EN
-"$YE"**************$EN  Список приложений LIST"$a2" "$YE"***************$EN
-"$YE"**$EN Кнопки "$GR"вверх-вниз$EN - для прокрутки, "$GR"q$EN - для выхода "$YE"**$EN
+"$YE"**************$EN  $uk39 LIST"$a2" "$YE"***************$EN
+"$YE"**$EN $uk40 "$GR"$uk41"$EN" - $uk42, "$GR"q$EN - $uk43 "$YE"**$EN
 "$YE"*******************************************************$EN
-"$YE"Всего приложений:$EN $res_count
+"$YE"$uk44"$EN" $res_count
 $(echo "$ECHO_LST")
 "$YE"*******************************************************$EN\n"
 exit 0
 }
 
 helpa() {
-printf ""$WH"Версия скрипта $VERSION
+printf ""$WH"$uk74 $VERSION
 
-  Ключ $EN"$YE"ls$EN - "$WH"используя аргументы, выводит содержимое списков приложений.
-       "$BL"Пример:$EN
-          "$RE"./run-me.sh $EN"$YE"ls $EN"$GR"1$EN "$WH"- отобразит содержимое списка$EN "$GR"LIST1$EN
+  $uk75 $EN"$YE"ls$EN - "$WH"$uk76"$EN"
+       "$BL"$uk77"$EN"
+          "$RE"./run-me.sh $EN"$YE"ls $EN"$GR"1$EN "$WH"- $uk78"$EN" "$GR"LIST1$EN
 
-       "$YE"В данный момент обнаружены списки:$EN "$GR"$LS$EN
+       "$YE"$uk25"$EN" "$GR"$LS$EN
 
-  "$WH"Ключ $EN"$GR"-a$N "$WH"- отображает все приложеня.
-  Ключ $EN"$GR"-u$N "$WH"- отображает установленные приложения.
-  Ключ $EN"$GR"-s$N "$WH"- отображает системные приложения.
-  Ключ $EN"$GR"-d$N "$WH"- отображает удалённые приложения.
-       "$BL"Пример:$EN
-          "$RE"./run-me.sh $EN"$GR"-u$EN "$WH"- отображает список всех установленых пользователем приложений.
+  "$WH"$uk75 $EN"$GR"-a$N "$WH"- $uk31
+  $uk75 $EN"$GR"-u$N "$WH"- $uk32
+  $uk75 $EN"$GR"-s$N "$WH"- $uk33
+  $uk75 $EN"$GR"-d$N "$WH"- $uk34
+       "$BL"$uk77"$EN"
+          "$RE"./run-me.sh $EN"$GR"-u$EN "$WH"- $uk80
 
-  Ключ $EN"$YE"-r$EN - "$WH"задает режим УДАЛЕНИЯ приложений.
-  Ключ $EN"$YE"-rn$EN - "$WH"задает режим УДАЛЕНИЯ приложений БЕЗ БЕКАПА.
-  Ключ $EN"$YE"-i$EN - "$WH"задает режим ВОССТАНОВЛЕНИЯ приложений.
+  $uk75 $EN"$YE"-r$EN - "$WH"$uk81
+  $uk75 $EN"$YE"-rn$EN - "$WH"$uk82
+  $uk75 $EN"$YE"-i$EN - "$WH"$uk83
 
-    С параметрами $EN"$GR"1-n$EN - "$WH"задается список имён приложений.$EN
-       "$BL"Пример:$EN
-          "$RE"./run-me.sh $EN"$YE"-r $EN"$GR"2$EN "$WH"- запускает удаление приложений из списка$EN "$GR"LIST2$EN "$WH"
+    $uk84 $EN"$GR"1-n$EN - "$WH"$uk85"$EN"
+       "$BL"$uk77"$EN"
+          "$RE"./run-me.sh $EN"$YE"-r $EN"$GR"2$EN "$WH"- $uk86"$EN" "$GR"LIST2$EN "$WH"
 
-    "$WH"С параметром$EN "$GR"0$EN "$WH"имена приложений задаются вручную в кавычках через пробел.$EN
-       "$BL"Пример:$EN
-          "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 'com.miui.app1 com.miui.app2'$EN "$WH"- запускает восстановление приложений
-       $EN"$GR"com.miui.app1$EN "$WH"и$EN "$GR"com.miui.app2$EN
+    "$WH"$uk87"$EN" "$GR"0$EN "$WH"$uk88"$EN"
+       "$BL"$uk77"$EN"
+          "$RE"./run-me.sh $EN"$YE"-i $EN"$GR"0 'com.miui.app1 com.miui.app2'$EN "$WH"- $uk89
+       $EN"$GR"com.miui.app1$EN "$WH"$uk95"$EN" "$GR"com.miui.app2$EN
 
-  "$WH"Для простой УСТАНОВКИ приложений, их$EN "$GR"apk$EN "$WH"файлы нужно разместить в директории$EN "$GR"BACKUP_APP_0$EN.
-  "$WH"Запустить восстановление с параметром$EN "$GR"0$EN. "$WH"В качестве имён указать названия файлов приложений
-  (без$EN "$GR".apk$EN "$WH"вконце). Все как в случае с восстановлением.$EN
+  "$WH"$uk90"$EN" "$GR"apk$EN "$WH"$uk91"$EN" "$GR"BACKUP_APP_0$EN.
+  "$WH"$uk92"$EN" "$GR"0$EN. "$WH"$uk93"$EN" "$GR".apk$EN "$WH"$uk94"$EN"
 
-  "$RE"Для УСТАНОВКИ и ВОССТАНОВЛЕНИЯ приложений в настройках смартфона$EN "$YE"\"Для разработчиков\"$EN
-  "$RE"переключатель$EN "$YE"\"Установка через USB\"$EN "$RE"должен быть$EN "$YE"ВКЛЮЧЕН!$EN\n\n"; exit 0
+  "$RE"$uk8"$EN" "$YE"\"$uk9\"$EN
+  "$RE"$uk10"$EN" "$YE"\"$uk11\"$EN "$RE"$uk12"$EN"\n\n"; exit 0
 }
 
 a2=$2
@@ -376,6 +376,5 @@ clear
 if [[ $DEV = '' ]]; then
 conn
 else
-printf ""$BL"$uk2 $EN"$GR"\"$DEV\"$EN\n"
 primary_selecting
 fi
