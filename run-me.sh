@@ -11,13 +11,12 @@ SED=''
 fi
 
 source "$(dirname $0)/l10n"
-local=uk
 DEV=$(adb devices -l | tail -n +2 | cut -d: -f4 | cut -d' ' -f1) #для работи повинно бути +2, для налагодження +1 $uk96
 CONNECT="$(dirname $0)/connect.sh"
 LS_N=$(ls "$(dirname $0)"/LIST*.txt | cut -dT -f2 | cut -d. -f1)
 LS=$(basename -a "$(dirname $0)"/LIST*.txt | sed 's/.txt//' | tr '\n' ' ')
 F='$'
-VERSION='1.2'
+VERSION='2.0'
 date=`date`
 
 FON="2;1"
@@ -25,7 +24,7 @@ RE="\e[1;91m"
 GR="\e[$FON;92m"
 YE="\e[$FON;93m"
 BL="\e[$FON;94m"
-WH="\e[$FON;97m" # "97" - якщо фон терминала тёмный, "90" - если фон тереминала светлый $uk97
+WH="\e[$FON;97m" # "97" - якщо фон терміналу темний, "90" - якщо фон тереміналу світлий $uk97
 EN="\e[0m"
 
 worker_rm(){
